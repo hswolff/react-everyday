@@ -8,6 +8,8 @@ import {
 } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { RouteConfig } from './Router';
+import { Project, projectFixtures } from './data';
+import ProjectListItem from './ProjectListItem';
 
 interface Props extends NavigationScreenProps {}
 
@@ -16,24 +18,20 @@ export default class ProjectListScreen extends React.Component<Props> {
     title: 'Projects',
   };
 
+  private onPress = (title: string) => {
+    this.props.navigation.navigate(String(RouteConfig.Project), {
+      projectName: title,
+    });
+  };
+
   render() {
     return (
       <View style={styles.root}>
         <FlatList
-          style={styles.list}
-          data={[{ key: 'a' }, { key: 'b' }]}
+          data={projectFixtures}
+          keyExtractor={(i: Project, index) => i.title + index}
           renderItem={({ item }) => (
-            <TouchableHighlight
-              onPress={() =>
-                this.props.navigation.navigate(String(RouteConfig.Project), {
-                  projectName: item.key,
-                })
-              }
-            >
-              <View style={styles.listItem}>
-                <Text>{item.key}</Text>
-              </View>
-            </TouchableHighlight>
+            <ProjectListItem onPress={this.onPress} {...item} />
           )}
         />
       </View>
@@ -44,15 +42,5 @@ export default class ProjectListScreen extends React.Component<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    alignItems: 'center',
-    alignSelf: 'center',
-  },
-  list: {
-    flex: 1,
-  },
-  listItem: {
-    flex: 1,
-    paddingVertical: 40,
-    width: 200,
   },
 });
