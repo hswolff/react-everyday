@@ -1,12 +1,9 @@
 import React from 'react';
+import { StyleSheet, View, FlatList, Button } from 'react-native';
 import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  TouchableHighlight,
-} from 'react-native';
-import { NavigationScreenProps } from 'react-navigation';
+  NavigationScreenProps,
+  NavigationStackScreenOptions,
+} from 'react-navigation';
 import { RouteConfig } from './Router';
 import { Project, projectFixtures } from './data';
 import ProjectListItem from './ProjectListItem';
@@ -14,12 +11,20 @@ import ProjectListItem from './ProjectListItem';
 interface Props extends NavigationScreenProps {}
 
 export default class ProjectListScreen extends React.Component<Props> {
-  static navigationOptions = {
+  static navigationOptions = ({
+    navigation,
+  }: NavigationScreenProps): NavigationStackScreenOptions => ({
     title: 'Projects',
-  };
+    headerRight: (
+      <Button
+        title="Add +"
+        onPress={() => navigation.navigate(RouteConfig.CreateProject)}
+      />
+    ),
+  });
 
   private onPress = (title: string) => {
-    this.props.navigation.navigate(String(RouteConfig.Project), {
+    this.props.navigation.navigate(RouteConfig.Project, {
       projectName: title,
     });
   };
