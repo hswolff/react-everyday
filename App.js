@@ -1,8 +1,4 @@
 import React from 'react';
-import App from './components/App';
+import Router from './components/Router';
 
-export default class AppRoot extends React.Component {
-  render() {
-    return <App />;
-  }
-}
+export default () => <Router />;
