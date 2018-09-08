@@ -5,9 +5,17 @@ import {
   View,
   TextInput,
   TouchableHighlight,
+  Dimensions,
 } from 'react-native';
 import { NavigationScreenProps, SafeAreaView } from 'react-navigation';
+import { FontAwesome } from '@expo/vector-icons';
 import { Project } from './data';
+
+const halfWindow = Dimensions.get('window').width / 2;
+const iconSize = {
+  width: halfWindow * 0.55,
+  height: halfWindow * 0.75,
+};
 
 interface Props extends NavigationScreenProps {}
 interface State extends Project {}
@@ -21,28 +29,34 @@ export default class AddProjectScreen extends React.Component<Props, State> {
 
   state = { title: '' };
 
+  private onCreate = () => {
+    alert('Project Created');
+    this.props.navigation.goBack();
+  };
+
   render() {
     return (
       <SafeAreaView style={styles.root}>
         <View style={styles.content}>
-          <Text style={styles.title}>Create a Project</Text>
+          <FontAwesome
+            name="road"
+            size={halfWindow}
+            color="#000"
+            style={{ alignSelf: 'center' }}
+          />
+          <Text style={styles.title}>Create Project</Text>
           <TextInput
             style={styles.inputTitle}
-            placeholder="Set Title"
+            placeholder="Title"
             onChangeText={title => this.setState({ title })}
           />
         </View>
         <View style={styles.footer}>
           <FooterButton
             onPress={() => this.props.navigation.goBack()}
-            title="Dismiss"
             type="cancel"
           />
-          <FooterButton
-            onPress={() => this.props.navigation.goBack()}
-            title="Create"
-            type="confirm"
-          />
+          <FooterButton onPress={this.onCreate} type="confirm" />
         </View>
       </SafeAreaView>
     );
@@ -72,25 +86,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'stretch',
-    height: 200,
+    height: iconSize.height,
   },
 });
 
 interface FooterButtonProps {
-  title: string;
   onPress: () => void;
   type: 'cancel' | 'confirm';
 }
-function FooterButton({ title, onPress, type }: FooterButtonProps) {
+function FooterButton({ onPress, type }: FooterButtonProps) {
+  let rootStyle;
+  let icon = 'plus-circle';
+  if (type === 'cancel') {
+    rootStyle = footerButtonStyle.cancel;
+    icon = 'times-circle';
+  }
+
   return (
     <TouchableHighlight
-      style={[
-        footerButtonStyle.root,
-        type === 'cancel' ? footerButtonStyle.cancel : null,
-      ]}
+      style={[footerButtonStyle.root, rootStyle]}
       onPress={onPress}
     >
-      <Text>{title}</Text>
+      <FontAwesome name={icon} size={iconSize.width} color="white" />
     </TouchableHighlight>
   );
 }

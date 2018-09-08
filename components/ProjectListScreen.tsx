@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, Button } from 'react-native';
+import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import {
   NavigationScreenProps,
   NavigationStackScreenOptions,
@@ -7,6 +7,7 @@ import {
 import { RouteConfig } from './Router';
 import { Project, projectFixtures } from './data';
 import ProjectListItem from './ProjectListItem';
+import { FontAwesome } from '@expo/vector-icons';
 
 interface Props extends NavigationScreenProps {}
 
@@ -16,10 +17,12 @@ export default class ProjectListScreen extends React.Component<Props> {
   }: NavigationScreenProps): NavigationStackScreenOptions => ({
     title: 'Projects',
     headerRight: (
-      <Button
-        title="Add +"
+      <TouchableOpacity
         onPress={() => navigation.navigate(RouteConfig.CreateProject)}
-      />
+        style={styles.addButton}
+      >
+        <FontAwesome name="plus" size={26} color="black" />
+      </TouchableOpacity>
     ),
   });
 
@@ -47,5 +50,8 @@ export default class ProjectListScreen extends React.Component<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  addButton: {
+    paddingHorizontal: 10,
   },
 });
