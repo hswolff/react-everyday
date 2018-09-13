@@ -1,6 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { RouteConfig } from './Router';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { Project } from './data';
 
 interface Props extends Project {
@@ -11,11 +10,11 @@ export default class ProjectListItem extends React.Component<Props> {
   render() {
     const { title } = this.props;
     return (
-      <TouchableHighlight onPress={() => this.props.onPress(title)}>
+      <TouchableOpacity onPress={() => this.props.onPress(title)}>
         <View style={styles.root}>
           <Text>{title}</Text>
         </View>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 }
