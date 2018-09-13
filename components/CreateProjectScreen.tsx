@@ -27,7 +27,7 @@ export default class AddProjectScreen extends React.Component<Props, State> {
     };
   };
 
-  state = { title: '' };
+  state = { title: '', photosTaken: 0, photos: {} };
 
   private onCreate = () => {
     alert('Project Created');
