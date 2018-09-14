@@ -21,7 +21,7 @@ interface Props extends NavigationScreenProps {}
 interface State extends Project {}
 
 export default class AddProjectScreen extends React.Component<Props, State> {
-  static navigationOptions = ({ navigation }: NavigationScreenProps) => {
+  static navigationOptions = () => {
     return {
       title: 'Create Project',
     };

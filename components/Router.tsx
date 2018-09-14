@@ -1,7 +1,7 @@
 import { createStackNavigator } from 'react-navigation';
-import HomeScreen from './ProjectListScreen';
+import ProjectListScreen from './ProjectListScreen';
 import ProjectScreen from './ProjectScreen';
-import AddProjectScreen from './CreateProjectScreen';
+import CreateProjectScreen from './CreateProjectScreen';
 
 export enum RouteConfig {
   ProjectList = 'ProjectList',
@@ -13,10 +13,10 @@ export enum RouteConfig {
 export default createStackNavigator(
   {
     Main: createStackNavigator({
-      [RouteConfig.ProjectList]: HomeScreen,
+      [RouteConfig.ProjectList]: ProjectListScreen,
       [RouteConfig.Project]: ProjectScreen,
     }),
-    [RouteConfig.CreateProject]: AddProjectScreen,
+    [RouteConfig.CreateProject]: CreateProjectScreen,
   },
   {
     mode: 'modal',
