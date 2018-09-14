@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import {
   NavigationScreenProps,
   NavigationStackScreenOptions,
@@ -38,8 +44,21 @@ export default class ProjectListScreen extends React.Component<Props> {
         <FlatList
           data={projectFixtures}
           keyExtractor={(i: Project, index) => i.title + index}
-          renderItem={({ item }) => (
-            <ProjectListItem onPress={this.onPress} {...item} />
+          ItemSeparatorComponent={
+            Platform.OS === 'ios'
+              ? ({ highlighted }) => (
+                  <View
+                    style={[styles.separator, highlighted && { marginLeft: 0 }]}
+                  />
+                )
+              : null
+          }
+          renderItem={({ item, separators }) => (
+            <ProjectListItem
+              onPress={this.onPress}
+              separators={separators}
+              {...item}
+            />
           )}
         />
       </View>
@@ -50,6 +69,10 @@ export default class ProjectListScreen extends React.Component<Props> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  separator: {
+    backgroundColor: '#999',
+    height: 1,
   },
   addButton: {
     paddingHorizontal: 10,
