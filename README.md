@@ -18,31 +18,73 @@ Please wish me all the luck.
 
 An outline of the screens we're going to make.
 
-```
-# HomeScreen
+Project List Screen
 
-- List of projects
-- Can delete a project
-- Can add a project
+- [x] List of projects
+- [x] Data to show for each item
+  - [x] Title
+  - [x] Show last photo taken if it exists
+  - [x] Number of photos taken
+  - [x] Start of first photo and last photo
+- [ ] Can add a project
 
-# ProjectScreen
+Add Project Screen
 
-- Can edit project
-    - Edit reminders
-    - Rename project
-    - Export pictures
-    - Reset guide bars
-- Shows calendar
-    - Those that have pictures shows thumbnails
-    - Those that don't show the calendar day
-        - Click on that day to show photos from that day
-- Bottom bar
-    - Camera icon to add to latest day
-    - Create video button
+- [ ] Prompt just for a title
 
-# CameraScreen
+Data Management
 
-- Lets you capture a photo
-- Has onion skin to help align photo
-- Has guide bars
-```
+- [ ] https://facebook.github.io/react-native/docs/0.56/asyncstorage
+- [ ] https://github.com/aweary/react-copy-write
+- [ ] Cache dates that have pictures in data and lazily sync when a project is loaded
+- [ ] https://docs.expo.io/versions/v29.0.0/sdk/filesystem
+
+Project Screen
+
+- [ ] Render calendar https://github.com/wix/react-native-calendars
+  - [ ] For day that has a picture show it
+  - [ ] For future days grey it out
+  - [ ] For days that don’t have a picture show the number of the day
+  - [ ] When a user clicks on a day open the camera screen
+- [ ] Show edit icon in top right
+  - [ ] Delete project
+  - [ ] Rename project
+  - [ ] Export project
+  - [ ] Reminders.
+  - [ ] Reset alignment guides
+- [ ] Show play icon
+  - [ ] Stitch together all pictures into a video
+  - [ ] Control FPS
+  - [ ] Whether it loops
+
+Camera Screen
+
+- [ ] https://docs.expo.io/versions/v29.0.0/sdk/camera
+- [ ] Flip front or back camera
+- [ ] Flash on or off
+- [ ] Show / hide alignment guides
+- [ ] Close camera
+- [ ] Take photo
+- [ ] After take photo show preview.
+- [ ] Then allow user to retake or accept
+
+Add alignment guide support
+
+- [ ] Do automatically when first take a photo in a new orient
+- [ ] Add option menu to reset alignment guides
+- [ ] Save positions in project data
+- [ ] https://facebook.github.io/react-native/docs/0.56/panresponder
+
+Add ability to set reminders to take photo
+
+- [ ] https://docs.expo.io/versions/v29.0.0/sdk/notifications
+- [ ] When a user clicks on a reminder opens to the project and opens the camera
+- [ ] Add to list of edit options on project page
+
+Miscellaneous
+
+- [ ] Lock orientation to portrait
+- [ ] Change entry point to be index.js https://docs.expo.io/versions/v29.0.0/workflow/configuration
+- [ ] Add support for deep linking to a project
+- [ ] Find final name
+- [ ] Create logo
