@@ -4,7 +4,7 @@ import {
   Text,
   View,
   TextInput,
-  TouchableHighlight,
+  TouchableOpacity,
   Dimensions,
 } from 'react-native';
 import { NavigationScreenProps, SafeAreaView } from 'react-navigation';
@@ -13,8 +13,8 @@ import { Project } from './data';
 
 const halfWindow = Dimensions.get('window').width / 2;
 const iconSize = {
-  width: halfWindow * 0.55,
-  height: halfWindow * 0.75,
+  width: halfWindow * 0.45,
+  height: halfWindow * 0.65,
 };
 
 interface Props extends NavigationScreenProps {}
@@ -52,11 +52,25 @@ export default class AddProjectScreen extends React.Component<Props, State> {
           />
         </View>
         <View style={styles.footer}>
-          <FooterButton
+          <TouchableOpacity
+            style={styles.footerButton}
             onPress={() => this.props.navigation.goBack()}
-            type="cancel"
-          />
-          <FooterButton onPress={this.onCreate} type="confirm" />
+          >
+            <Text style={styles.footerButtonLabel}>Cancel</Text>
+            <FontAwesome
+              name="times-circle"
+              size={iconSize.width}
+              color="red"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerButton} onPress={this.onCreate}>
+            <Text style={styles.footerButtonLabel}>Create</Text>
+            <FontAwesome
+              name="plus-circle"
+              size={iconSize.width}
+              color="green"
+            />
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
@@ -88,38 +102,13 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     height: iconSize.height,
   },
-});
-
-interface FooterButtonProps {
-  onPress: () => void;
-  type: 'cancel' | 'confirm';
-}
-function FooterButton({ onPress, type }: FooterButtonProps) {
-  let rootStyle;
-  let icon = 'plus-circle';
-  if (type === 'cancel') {
-    rootStyle = footerButtonStyle.cancel;
-    icon = 'times-circle';
-  }
-
-  return (
-    <TouchableHighlight
-      style={[footerButtonStyle.root, rootStyle]}
-      onPress={onPress}
-    >
-      <FontAwesome name={icon} size={iconSize.width} color="white" />
-    </TouchableHighlight>
-  );
-}
-
-const footerButtonStyle = StyleSheet.create({
-  root: {
+  footerButton: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'green',
   },
-  cancel: {
-    backgroundColor: 'red',
+  footerButtonLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
