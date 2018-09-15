@@ -30,7 +30,7 @@ Project List Screen
 
 Add Project Screen
 
-- [ ] Prompt just for a title
+- [x] Prompt just for a title
 
 Data Management
 
