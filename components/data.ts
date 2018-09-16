@@ -1,3 +1,6 @@
+// @ts-ignore
+import createState from './react-copy-write';
+
 export interface PhotoDay {
   date: Date;
   uri: string;
@@ -27,3 +30,25 @@ export const projectFixtures = [
     photos: {},
   },
 ];
+
+export interface ApplicationState {
+  projects: Array<Project>;
+}
+
+export const { Provider, Consumer, createSelector, mutate } = createState();
+
+export const initialState: ApplicationState = {
+  projects: [],
+};
+
+export const selectors = {
+  projects: createSelector((state: ApplicationState) => state.projects),
+};
+
+export const mutators = {
+  addProject(project: Project) {
+    mutate((draft: ApplicationState) => {
+      draft.projects.push(project);
+    });
+  },
+};

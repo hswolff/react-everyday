@@ -26,7 +26,7 @@ Project List Screen
   - [x] Show last photo taken if it exists
   - [x] Number of photos taken
   - [x] Start of first photo and last photo
-- [ ] Can add a project
+- [x] Can add a project
 
 Add Project Screen
 
@@ -34,10 +34,11 @@ Add Project Screen
 
 Data Management
 
-- [ ] https://facebook.github.io/react-native/docs/0.56/asyncstorage
-- [ ] https://github.com/aweary/react-copy-write
+- [x] https://facebook.github.io/react-native/docs/0.56/asyncstorage
+- [x] https://github.com/aweary/react-copy-write
 - [ ] Cache dates that have pictures in data and lazily sync when a project is loaded
 - [ ] https://docs.expo.io/versions/v29.0.0/sdk/filesystem
+- [ ] Add TypeScript definitions to the Selector component of react-copy-write
 
 Project Screen
 

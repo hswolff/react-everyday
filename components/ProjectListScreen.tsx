@@ -11,7 +11,7 @@ import {
   NavigationStackScreenOptions,
 } from 'react-navigation';
 import { RouteConfig } from './Router';
-import { Project, projectFixtures } from './data';
+import { Project, Consumer, selectors } from './data';
 import ProjectListItem from './ProjectListItem';
 import { FontAwesome } from '@expo/vector-icons';
 
@@ -41,26 +41,33 @@ export default class ProjectListScreen extends React.Component<Props> {
   render() {
     return (
       <View style={styles.root}>
-        <FlatList
-          data={projectFixtures}
-          keyExtractor={(i: Project, index) => i.title + index}
-          ItemSeparatorComponent={
-            Platform.OS === 'ios'
-              ? ({ highlighted }) => (
-                  <View
-                    style={[styles.separator, highlighted && { marginLeft: 0 }]}
-                  />
-                )
-              : null
-          }
-          renderItem={({ item, separators }) => (
-            <ProjectListItem
-              onPress={this.onPress}
-              separators={separators}
-              {...item}
+        <Consumer select={[selectors.projects]}>
+          {(projects: Array<Project>) => (
+            <FlatList
+              data={projects}
+              keyExtractor={(i: Project, index) => i.title + index}
+              ItemSeparatorComponent={
+                Platform.OS === 'ios'
+                  ? ({ highlighted }) => (
+                      <View
+                        style={[
+                          styles.separator,
+                          highlighted && { marginLeft: 0 },
+                        ]}
+                      />
+                    )
+                  : null
+              }
+              renderItem={({ item, separators }) => (
+                <ProjectListItem
+                  onPress={this.onPress}
+                  separators={separators}
+                  {...item}
+                />
+              )}
             />
           )}
-        />
+        </Consumer>
       </View>
     );
   }

@@ -1,4 +1,4 @@
 import React from 'react';
-import Router from './components/Router';
+import Root from './components/Root';
 
-export default () => <Router />;
+export default () => <Root />;
