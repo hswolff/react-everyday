@@ -42,7 +42,7 @@ Data Management
 
 Project Screen
 
-- [ ] Render calendar https://github.com/wix/react-native-calendars
+- [x] Render calendar https://github.com/wix/react-native-calendars
   - [ ] For day that has a picture show it
   - [ ] For future days grey it out
   - [ ] For days that don’t have a picture show the number of the day

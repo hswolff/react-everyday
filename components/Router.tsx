@@ -12,10 +12,18 @@ export enum RouteConfig {
 
 export default createStackNavigator(
   {
-    Main: createStackNavigator({
-      [RouteConfig.ProjectList]: ProjectListScreen,
-      [RouteConfig.Project]: ProjectScreen,
-    }),
+    Main: createStackNavigator(
+      {
+        [RouteConfig.ProjectList]: ProjectListScreen,
+        [RouteConfig.Project]: ProjectScreen,
+      },
+      {
+        // initialRouteName: RouteConfig.Project,
+        // initialRouteParams: {
+        //   projectName: 'Banana Pan',
+        // },
+      }
+    ),
     [RouteConfig.CreateProject]: CreateProjectScreen,
   },
   {
