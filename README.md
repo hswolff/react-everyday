@@ -48,7 +48,7 @@ Project Screen
   - [ ] For days that don’t have a picture show the number of the day
   - [ ] When a user clicks on a day open the camera screen
 - [ ] Show edit icon in top right
-  - [ ] Delete project
+  - [x] Delete project
   - [ ] Rename project
   - [ ] Export project
   - [ ] Reminders.

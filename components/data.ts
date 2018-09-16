@@ -51,4 +51,11 @@ export const mutators = {
       draft.projects.push(project);
     });
   },
+  deleteProject(projectName: string) {
+    mutate((draft: ApplicationState) => {
+      draft.projects = draft.projects.filter(
+        proj => proj.title !== projectName
+      );
+    });
+  },
 };

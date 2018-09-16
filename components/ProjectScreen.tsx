@@ -1,12 +1,24 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { CalendarList } from 'react-native-calendars';
+import { mutators } from './data';
 
 export default class ProjectScreen extends React.Component {
   static navigationOptions = ({ navigation }: NavigationScreenProps) => {
+    const projectName: string = navigation.getParam('projectName', 'Details');
     return {
-      title: navigation.getParam('projectName', 'Details'),
+      title: projectName,
+      headerRight: (
+        <TouchableOpacity
+          onPress={() => {
+            mutators.deleteProject(projectName);
+            navigation.goBack();
+          }}
+        >
+          <Text>Delete</Text>
+        </TouchableOpacity>
+      ),
     };
   };
 
