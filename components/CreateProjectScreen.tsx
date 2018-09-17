@@ -49,6 +49,7 @@ export default class AddProjectScreen extends React.Component<Props, State> {
             style={styles.inputTitle}
             placeholder="Title"
             onChangeText={title => this.setState({ title })}
+            autoFocus
           />
         </View>
         <View style={styles.footer}>

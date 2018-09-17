@@ -43,10 +43,11 @@ Data Management
 Project Screen
 
 - [x] Render calendar https://github.com/wix/react-native-calendars
-  - [ ] For day that has a picture show it
-  - [ ] For future days grey it out
-  - [ ] For days that don’t have a picture show the number of the day
-  - [ ] When a user clicks on a day open the camera screen
+  - [x] For day that has a picture show it
+  - [x] For future days grey it out
+  - [x] For days that don’t have a picture show the number of the day
+  - [x] When a user clicks on a day open the camera screen
+  - [ ] When a user clicks on an image it brings them to the CameraScreen in preview mode
 - [ ] Show edit icon in top right
   - [x] Delete project
   - [ ] Rename project
