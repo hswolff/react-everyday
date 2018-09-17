@@ -61,13 +61,13 @@ Project Screen
 Camera Screen
 
 - [ ] https://docs.expo.io/versions/v29.0.0/sdk/camera
-- [ ] Flip front or back camera
-- [ ] Flash on or off
+- [x] Flip front or back camera
+- [x] Flash on or off
 - [ ] Show / hide alignment guides
-- [ ] Close camera
-- [ ] Take photo
-- [ ] After take photo show preview.
-- [ ] Then allow user to retake or accept
+- [x] Close camera
+- [x] Take photo
+- [x] After take photo show preview.
+- [x] Then allow user to retake or accept
 
 Add alignment guide support
 

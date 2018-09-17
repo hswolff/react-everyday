@@ -43,6 +43,11 @@ export const initialState: ApplicationState = {
 
 export const selectors = {
   projects: createSelector((state: ApplicationState) => state.projects),
+  getProject(projectName: string): Project {
+    return createSelector((state: ApplicationState) =>
+      state.projects.find(p => p.title === projectName)
+    );
+  },
 };
 
 export const mutators = {

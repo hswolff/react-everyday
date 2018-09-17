@@ -3,10 +3,17 @@ import { Button, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { CalendarList } from 'react-native-calendars';
 import { mutators } from './data';
+import { RouteConfig, RouteParams } from './Router';
 
-export default class ProjectScreen extends React.Component {
+interface Props extends NavigationScreenProps {}
+
+export default class ProjectScreen extends React.Component<Props> {
   static navigationOptions = ({ navigation }: NavigationScreenProps) => {
-    const projectName: string = navigation.getParam('projectName', 'Details');
+    const projectName: string = navigation.getParam(
+      RouteParams.ProjectName,
+      'Details'
+    );
+
     return {
       title: projectName,
       headerRight: (
@@ -23,6 +30,7 @@ export default class ProjectScreen extends React.Component {
   };
 
   render() {
+    const { navigation } = this.props;
     return (
       <View>
         <CalendarList
@@ -41,6 +49,11 @@ export default class ProjectScreen extends React.Component {
           maxDate={new Date()}
           onDayPress={day => {
             console.log('selected day', day);
+            navigation.navigate(RouteConfig.CameraScreen, {
+              [RouteParams.ProjectName]: navigation.getParam(
+                RouteParams.ProjectName
+              ),
+            });
           }}
         />
       </View>
