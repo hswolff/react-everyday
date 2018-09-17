@@ -6,6 +6,8 @@ import { Provider } from './data';
 
 const applicationStateKey = 'ApplicationState';
 
+const navigationPersistenceKey = __DEV__ ? 'NavigationStateDEV' : null;
+
 export default class Root extends React.Component {
   state = {
     initialState: null,
@@ -32,7 +34,7 @@ export default class Root extends React.Component {
     return (
       <Provider initialState={this.state.initialState}>
         <Consumer>{this.onDataChange}</Consumer>
-        <Router />
+        <Router persistenceKey={navigationPersistenceKey} />
       </Provider>
     );
   }

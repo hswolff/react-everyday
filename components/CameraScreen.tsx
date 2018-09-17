@@ -8,9 +8,10 @@ import {
   Dimensions,
 } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Project } from './data';
+import { mutators } from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import { Camera, Permissions, CameraObject, PictureResponse } from 'expo';
+import { RouteParams } from './Router';
 
 enum UiState {
   AskingForPermissions,
@@ -90,8 +91,29 @@ export default class CameraScreen extends React.Component<Props, State> {
     });
   };
 
-  private savePhoto = () => {
-    this.setState({ preview: undefined });
+  private savePhoto = async () => {
+    const photoPreview = this.state.preview;
+    if (photoPreview === undefined) {
+      this.redoPhoto();
+      return;
+    }
+
+    const projectName = this.props.navigation.getParam(RouteParams.ProjectName);
+    const dateString = this.props.navigation.getParam(
+      RouteParams.CurrentDateString
+    );
+    try {
+      await mutators.savePhoto({
+        projectName,
+        dateKey: dateString,
+        photoUri: photoPreview.uri,
+      });
+    } catch (error) {
+      this.redoPhoto();
+      return;
+    }
+
+    this.props.navigation.goBack();
   };
 
   render() {

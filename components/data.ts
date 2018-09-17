@@ -1,8 +1,9 @@
 // @ts-ignore
 import createState from './react-copy-write';
+import { FileSystem } from 'expo';
 
 export interface PhotoDay {
-  date: Date;
+  date: string;
   uri: string;
 }
 
@@ -17,6 +18,12 @@ export interface Project {
   lastPhoto?: PhotoDay;
   photos: ProjectPhotos;
 }
+
+const projectUtilities = {
+  folderPath(projectName: string) {
+    return FileSystem.documentDirectory + encodeURIComponent(projectName) + '/';
+  },
+};
 
 export const projectFixtures = [
   {
@@ -43,7 +50,7 @@ export const initialState: ApplicationState = {
 
 export const selectors = {
   projects: createSelector((state: ApplicationState) => state.projects),
-  getProject(projectName: string): Project {
+  getProject(projectName: string): (state: ApplicationState) => Project {
     return createSelector((state: ApplicationState) =>
       state.projects.find(p => p.title === projectName)
     );
@@ -51,16 +58,42 @@ export const selectors = {
 };
 
 export const mutators = {
-  addProject(project: Project) {
+  async addProject(project: Project) {
     mutate((draft: ApplicationState) => {
       draft.projects.push(project);
     });
+    await FileSystem.makeDirectoryAsync(
+      projectUtilities.folderPath(project.title)
+    );
   },
   deleteProject(projectName: string) {
     mutate((draft: ApplicationState) => {
       draft.projects = draft.projects.filter(
         proj => proj.title !== projectName
       );
+    });
+  },
+  async savePhoto({
+    projectName,
+    dateKey,
+    photoUri,
+  }: {
+    projectName: string;
+    dateKey: string;
+    photoUri: string;
+  }) {
+    const filePath =
+      projectUtilities.folderPath(projectName) + dateKey + '.jpg';
+
+    await FileSystem.copyAsync({ from: photoUri, to: filePath });
+
+    mutate((draft: ApplicationState) => {
+      const project = selectors.getProject(projectName)(draft);
+
+      project.photos[dateKey] = {
+        date: dateKey,
+        uri: filePath!,
+      };
     });
   },
 };

@@ -53,6 +53,7 @@ export default class ProjectScreen extends React.Component<Props> {
               [RouteParams.ProjectName]: navigation.getParam(
                 RouteParams.ProjectName
               ),
+              [RouteParams.CurrentDateString]: day.dateString,
             });
           }}
         />

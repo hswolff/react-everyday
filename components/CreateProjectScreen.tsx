@@ -29,9 +29,8 @@ export default class AddProjectScreen extends React.Component<Props, State> {
 
   state = { title: '', photosTaken: 0, photos: {} };
 
-  private onCreate = () => {
-    mutators.addProject(this.state);
-    alert('Project Created');
+  private onCreate = async () => {
+    await mutators.addProject(this.state);
     this.props.navigation.goBack();
   };
 

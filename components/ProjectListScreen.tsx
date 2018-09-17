@@ -10,7 +10,7 @@ import {
   NavigationScreenProps,
   NavigationStackScreenOptions,
 } from 'react-navigation';
-import { RouteConfig } from './Router';
+import { RouteConfig, RouteParams } from './Router';
 import { Project, Consumer, selectors } from './data';
 import ProjectListItem from './ProjectListItem';
 import { FontAwesome } from '@expo/vector-icons';
@@ -34,7 +34,7 @@ export default class ProjectListScreen extends React.Component<Props> {
 
   private onPress = (title: string) => {
     this.props.navigation.navigate(RouteConfig.Project, {
-      projectName: title,
+      [RouteParams.ProjectName]: title,
     });
   };
 
