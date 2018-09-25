@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
+  Alert,
 } from 'react-native';
 import { NavigationScreenProps, SafeAreaView } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
@@ -30,6 +32,10 @@ export default class AddProjectScreen extends React.Component<Props, State> {
   state = { title: '', photosTaken: 0, photos: {} };
 
   private onCreate = async () => {
+    if (this.state.title === '') {
+      Alert.alert('Enter a Project name');
+      return;
+    }
     await mutators.addProject(this.state);
     this.props.navigation.goBack();
   };
@@ -37,42 +43,52 @@ export default class AddProjectScreen extends React.Component<Props, State> {
   render() {
     return (
       <SafeAreaView style={styles.root}>
-        <View style={styles.content}>
-          <FontAwesome
-            name="road"
-            size={halfWindow}
-            color="#000"
-            style={{ alignSelf: 'center' }}
-          />
-          <Text style={styles.title}>Create Project</Text>
-          <TextInput
-            style={styles.inputTitle}
-            placeholder="Title"
-            onChangeText={title => this.setState({ title })}
-            autoFocus
-          />
-        </View>
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.footerButton}
-            onPress={() => this.props.navigation.goBack()}
-          >
-            <Text style={styles.footerButtonLabel}>Cancel</Text>
+        <ScrollView
+          contentContainerStyle={styles.scrollView}
+          keyboardDismissMode="on-drag"
+        >
+          <View style={styles.content}>
             <FontAwesome
-              name="times-circle"
-              size={iconSize.width}
-              color="red"
+              name="road"
+              size={halfWindow}
+              color="#000"
+              style={{ alignSelf: 'center' }}
             />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.footerButton} onPress={this.onCreate}>
-            <Text style={styles.footerButtonLabel}>Create</Text>
-            <FontAwesome
-              name="plus-circle"
-              size={iconSize.width}
-              color="green"
+            <Text style={styles.title}>Create Project</Text>
+            <TextInput
+              style={styles.inputTitle}
+              placeholder="Title"
+              onChangeText={title => this.setState({ title })}
+              returnKeyType="done"
+              onSubmitEditing={this.onCreate}
+              autoFocus
             />
-          </TouchableOpacity>
-        </View>
+          </View>
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={styles.footerButton}
+              onPress={() => this.props.navigation.goBack()}
+            >
+              <Text style={styles.footerButtonLabel}>Cancel</Text>
+              <FontAwesome
+                name="times-circle"
+                size={iconSize.width}
+                color="red"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.footerButton}
+              onPress={this.onCreate}
+            >
+              <Text style={styles.footerButtonLabel}>Create</Text>
+              <FontAwesome
+                name="plus-circle"
+                size={iconSize.width}
+                color="green"
+              />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }
@@ -81,6 +97,10 @@ export default class AddProjectScreen extends React.Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
   content: {
     flex: 1,

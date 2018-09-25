@@ -5,6 +5,8 @@ import {
   FlatList,
   TouchableOpacity,
   Platform,
+  Dimensions,
+  Text,
 } from 'react-native';
 import {
   NavigationScreenProps,
@@ -13,7 +15,9 @@ import {
 import { RouteConfig, RouteParams } from './Router';
 import { Project, Consumer, selectors } from './data';
 import ProjectListItem from './ProjectListItem';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+
+const deviceWidth = Dimensions.get('window').width;
 
 interface Props extends NavigationScreenProps {}
 
@@ -42,31 +46,47 @@ export default class ProjectListScreen extends React.Component<Props> {
     return (
       <View style={styles.root}>
         <Consumer select={[selectors.projects]}>
-          {(projects: Array<Project>) => (
-            <FlatList
-              data={projects}
-              keyExtractor={(i: Project, index) => i.title + index}
-              ItemSeparatorComponent={
-                Platform.OS === 'ios'
-                  ? ({ highlighted }) => (
-                      <View
-                        style={[
-                          styles.separator,
-                          highlighted && { marginLeft: 0 },
-                        ]}
-                      />
-                    )
-                  : null
-              }
-              renderItem={({ item, separators }) => (
-                <ProjectListItem
-                  onPress={this.onPress}
-                  separators={separators}
-                  {...item}
+          {(projects: Array<Project>) =>
+            projects.length ? (
+              <FlatList
+                data={projects}
+                keyExtractor={(i: Project, index) => i.title + index}
+                ItemSeparatorComponent={
+                  Platform.OS === 'ios'
+                    ? ({ highlighted }) => (
+                        <View
+                          style={[
+                            styles.separator,
+                            highlighted && { marginLeft: 0 },
+                          ]}
+                        />
+                      )
+                    : null
+                }
+                renderItem={({ item, separators }) => (
+                  <ProjectListItem
+                    onPress={this.onPress}
+                    separators={separators}
+                    {...item}
+                  />
+                )}
+              />
+            ) : (
+              <TouchableOpacity
+                style={styles.empty}
+                onPress={() =>
+                  this.props.navigation.navigate(RouteConfig.CreateProject)
+                }
+              >
+                <MaterialCommunityIcons
+                  name="flask-empty-outline"
+                  size={deviceWidth / 2}
+                  color="black"
                 />
-              )}
-            />
-          )}
+                <Text style={{ fontSize: 38 }}>Create a Project</Text>
+              </TouchableOpacity>
+            )
+          }
         </Consumer>
       </View>
     );
@@ -83,5 +103,10 @@ const styles = StyleSheet.create({
   },
   addButton: {
     paddingHorizontal: 10,
+  },
+  empty: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
