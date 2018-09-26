@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { mutators } from './data';
+import { mutators, Project } from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import { Camera, Permissions, CameraObject, PictureResponse } from 'expo';
 import { RouteParams } from './Router';
@@ -47,7 +47,9 @@ interface Props extends NavigationScreenProps {}
 interface State {
   uiState: UiState;
   type: string;
-  preview?: PictureResponse;
+  preview?: {
+    uri: string;
+  };
   capturingPhoto: boolean;
   flashMode: FlashMode;
 }
@@ -65,10 +67,30 @@ export default class CameraScreen extends React.Component<Props, State> {
 
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    const uiState =
+      status === 'granted' ? UiState.CapturePhoto : UiState.NoPermissions;
+
     this.setState({
-      uiState:
-        status === 'granted' ? UiState.CapturePhoto : UiState.NoPermissions,
+      uiState,
     });
+
+    if (uiState === UiState.NoPermissions) {
+      return;
+    }
+
+    const project: Project = this.props.navigation.getParam(
+      RouteParams.Project
+    );
+    const dateString = this.props.navigation.getParam(
+      RouteParams.CurrentDateString
+    );
+
+    if (project) {
+      const photo = project.photos[dateString];
+      if (photo) {
+        this.setState({ preview: photo, uiState: UiState.ReviewPhoto });
+      }
+    }
   }
 
   takePhoto = async () => {

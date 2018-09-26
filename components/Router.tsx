@@ -15,6 +15,7 @@ export enum RouteConfig {
 export enum RouteParams {
   ProjectName = 'projectName',
   CurrentDateString = 'dateString',
+  Project = 'project',
 }
 
 export default createStackNavigator(

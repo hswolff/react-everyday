@@ -37,7 +37,7 @@ Data Management
 - [x] https://facebook.github.io/react-native/docs/0.56/asyncstorage
 - [x] https://github.com/aweary/react-copy-write
 - [ ] Cache dates that have pictures in data and lazily sync when a project is loaded
-- [ ] https://docs.expo.io/versions/v29.0.0/sdk/filesystem
+- [x] https://docs.expo.io/versions/v29.0.0/sdk/filesystem
 - [ ] Add TypeScript definitions to the Selector component of react-copy-write
 
 Project Screen
@@ -47,7 +47,7 @@ Project Screen
   - [x] For future days grey it out
   - [x] For days that don’t have a picture show the number of the day
   - [x] When a user clicks on a day open the camera screen
-  - [ ] When a user clicks on an image it brings them to the CameraScreen in preview mode
+  - [x] When a user clicks on an image it brings them to the CameraScreen in preview mode
 - [ ] Show edit icon in top right
   - [x] Delete project
   - [ ] Rename project
@@ -61,7 +61,7 @@ Project Screen
 
 Camera Screen
 
-- [ ] https://docs.expo.io/versions/v29.0.0/sdk/camera
+- [x] https://docs.expo.io/versions/v29.0.0/sdk/camera
 - [x] Flip front or back camera
 - [x] Flash on or off
 - [ ] Show / hide alignment guides

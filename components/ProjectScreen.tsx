@@ -42,14 +42,10 @@ export default class ProjectScreen extends React.Component<Props> {
         {(project: Project) => (
           <View>
             <CalendarList
-              // Callback which gets executed when visible months change in scroll view. Default = undefined
-              onVisibleMonthsChange={months => {
-                console.log('now these months are visible', months);
-              }}
               // Max amount of months allowed to scroll to the past. Default = 50
-              pastScrollRange={4}
+              pastScrollRange={12}
               // Max amount of months allowed to scroll to the future. Default = 50
-              futureScrollRange={0}
+              futureScrollRange={1}
               // Enable or disable scrolling of calendar list
               scrollEnabled={true}
               // Enable or disable vertical scroll indicator. Default = false
@@ -62,21 +58,31 @@ export default class ProjectScreen extends React.Component<Props> {
                 const photo = project.photos[date.dateString];
                 if (photo) {
                   return (
-                    <Image
-                      source={{ uri: photo.uri }}
-                      style={[styles.dayContainer, styles.image]}
-                    />
+                    <View>
+                      <Image
+                        source={{ uri: photo.uri }}
+                        style={[styles.dayContainer, styles.image]}
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                        }}
+                      >
+                        <Day {...props} />
+                      </View>
+                    </View>
                   );
                 }
                 return <Day {...props} />;
               }}
               onDayPress={day => {
-                console.log('selected day', day);
                 navigation.navigate(RouteConfig.CameraScreen, {
                   [RouteParams.ProjectName]: navigation.getParam(
                     RouteParams.ProjectName
                   ),
                   [RouteParams.CurrentDateString]: day.dateString,
+                  [RouteParams.Project]: project,
                 });
               }}
             />
@@ -94,6 +100,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    resizeMode: 'contain',
+    // resizeMode: 'contain',
   },
 });
