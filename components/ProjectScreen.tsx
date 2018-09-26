@@ -39,7 +39,8 @@ export default class ProjectScreen extends React.Component<Props> {
     );
     return (
       <Consumer select={[selectors.getProject(projectName)]}>
-        {(project: Project) => (
+        {(project: Project) =>
+          project ? (
           <View>
             <CalendarList
               // Max amount of months allowed to scroll to the past. Default = 50
@@ -87,7 +88,8 @@ export default class ProjectScreen extends React.Component<Props> {
               }}
             />
           </View>
-        )}
+          ) : null
+        }
       </Consumer>
     );
   }
