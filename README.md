@@ -48,7 +48,7 @@ Project Screen
   - [x] For days that don’t have a picture show the number of the day
   - [x] When a user clicks on a day open the camera screen
   - [x] When a user clicks on an image it brings them to the CameraScreen in preview mode
-- [ ] Show edit icon in top right
+- [x] Show edit icon in top right
   - [x] Delete project
   - [ ] Rename project
   - [ ] Export project
@@ -69,6 +69,7 @@ Camera Screen
 - [x] Take photo
 - [x] After take photo show preview.
 - [x] Then allow user to retake or accept
+- [ ] Allow a user to pick a photo from their photo library
 
 Add alignment guide support
 
