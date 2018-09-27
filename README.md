@@ -58,6 +58,8 @@ Project Screen
   - [ ] Stitch together all pictures into a video
   - [ ] Control FPS
   - [ ] Whether it loops
+  - [ ] https://github.com/dev-labs-bg/swift-video-generator
+  - [ ] https://docs.expo.io/versions/v30.0.0/expokit/
 
 Camera Screen
 
@@ -86,8 +88,7 @@ Add ability to set reminders to take photo
 
 Miscellaneous
 
-- [ ] Lock orientation to portrait
-- [ ] Change entry point to be index.js https://docs.expo.io/versions/v29.0.0/workflow/configuration
+- [x] Lock orientation to portrait
 - [ ] Add support for deep linking to a project
 - [ ] Find final name
 - [ ] Create logo
