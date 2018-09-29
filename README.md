@@ -66,7 +66,7 @@ Camera Screen
 - [x] https://docs.expo.io/versions/v29.0.0/sdk/camera
 - [x] Flip front or back camera
 - [x] Flash on or off
-- [ ] Show / hide alignment guides
+- [x] Show / hide alignment guides
 - [x] Close camera
 - [x] Take photo
 - [x] After take photo show preview.

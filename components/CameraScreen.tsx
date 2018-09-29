@@ -16,7 +16,7 @@ import {
   FlashMode,
 } from './data';
 import { NavigationScreenProps } from 'react-navigation';
-import { Camera, Permissions, CameraObject, PictureResponse } from 'expo';
+import { Camera, Permissions, CameraObject } from 'expo';
 import { RouteParams } from './Router';
 import AlignmentGuides from './AlignmentGuides';
 
@@ -64,6 +64,7 @@ export default class CameraScreen extends React.Component<Props, State> {
     cameraSettings: {
       type: Camera.Constants.Type.back,
       flashMode: FlashMode.off,
+      showGrid: true,
     },
   };
 
@@ -211,13 +212,15 @@ export default class CameraScreen extends React.Component<Props, State> {
                 this.camera = ref;
               }}
             >
-              <AlignmentGuides
-                movable={true}
-                center={project.alignmentGuides.center}
-                eyes={project.alignmentGuides.eyes}
-                mouth={project.alignmentGuides.mouth}
-                onChange={this.onAlignmentGuidesChanged}
-              />
+              {this.state.cameraSettings.showGrid && (
+                <AlignmentGuides
+                  movable={true}
+                  center={project.alignmentGuides.center}
+                  eyes={project.alignmentGuides.eyes}
+                  mouth={project.alignmentGuides.mouth}
+                  onChange={this.onAlignmentGuidesChanged}
+                />
+              )}
               <MaterialCommunityIcons
                 name={flashIcons[this.state.cameraSettings.flashMode]}
                 color="white"
@@ -284,10 +287,23 @@ export default class CameraScreen extends React.Component<Props, State> {
                     style={styles.centerButton}
                   />
                 )}
-                <FontAwesome
-                  name="check-circle"
+                <MaterialCommunityIcons
+                  name={
+                    this.state.cameraSettings.showGrid ? 'grid' : 'grid-off'
+                  }
+                  color="white"
                   size={buttonSize}
-                  color="#000"
+                  onPress={() => {
+                    this.setState(
+                      {
+                        cameraSettings: {
+                          ...this.state.cameraSettings,
+                          showGrid: !this.state.cameraSettings.showGrid,
+                        },
+                      },
+                      this.saveCameraSettings
+                    );
+                  }}
                 />
               </ControlBar>
             </Camera>

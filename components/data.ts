@@ -31,6 +31,7 @@ export enum FlashMode {
 export interface CameraSettings {
   type: string;
   flashMode: FlashMode;
+  showGrid: boolean;
 }
 
 export interface Project {
@@ -53,6 +54,7 @@ export const projectUtilities = {
     cameraSettings: {
       type: Camera.Constants.Type.front,
       flashMode: FlashMode.off,
+      showGrid: true,
     },
     alignmentGuides: {
       center: screen.width * 0.5,
