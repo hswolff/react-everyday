@@ -128,6 +128,7 @@ export default class AlignmentGuides extends React.Component<
 > {
   static defaultProps = {
     movable: false,
+    onChange: () => {},
   };
 
   state: AlignmentGuidePositions = {

@@ -13,7 +13,7 @@ import {
 import { FontAwesome } from '@expo/vector-icons';
 import { mutators, Consumer, selectors, Project } from './data';
 import { NavigationScreenProps } from 'react-navigation';
-import { RouteParams } from './Router';
+import { RouteParams, RouteConfig } from './Router';
 
 const modalWidth = Dimensions.get('screen').width / 2;
 
@@ -41,38 +41,59 @@ export default class ProjectOptions extends React.Component<Props, State> {
   };
 
   render() {
+    const projectName = this.props.navigation.getParam(RouteParams.ProjectName);
+
     return (
-      <View>
-        <TouchableOpacity
-          style={{ paddingHorizontal: 15 }}
-          onPress={this.toggleModal}
-        >
-          <FontAwesome name="cog" size={26} color="black" />
-        </TouchableOpacity>
-        <Modal
-          visible={this.state.visible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={this.toggleModal}
-        >
-          <TouchableWithoutFeedback onPress={this.toggleModal}>
-            <View style={styles.modalBackground}>
-              <View style={styles.modalContent}>
-                <TouchableOpacity
-                  style={styles.modalTextContainer}
-                  onPress={this.onDelete}
-                >
-                  <Text style={styles.modalText}>Delete</Text>
-                </TouchableOpacity>
-                {/* <View style={styles.modalTextDivider} />
-                <TouchableOpacity style={styles.modalTextContainer} >
-                  <Text style={styles.modalText}>Rename</Text>
-                </TouchableOpacity> */}
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
-      </View>
+      <Consumer select={[selectors.getProject(projectName)]}>
+        {(project: Project) => (
+          <View>
+            <TouchableOpacity
+              style={{ paddingHorizontal: 15 }}
+              onPress={this.toggleModal}
+            >
+              <FontAwesome name="cog" size={26} color="black" />
+            </TouchableOpacity>
+            <Modal
+              visible={this.state.visible}
+              transparent={true}
+              animationType="fade"
+              onRequestClose={this.toggleModal}
+            >
+              <TouchableWithoutFeedback onPress={this.toggleModal}>
+                <View style={styles.modalBackground}>
+                  <View style={styles.modalContent}>
+                    <TouchableOpacity
+                      style={styles.modalTextContainer}
+                      onPress={this.onDelete}
+                    >
+                      <Text style={styles.modalText}>Delete</Text>
+                    </TouchableOpacity>
+                    <View style={styles.modalTextDivider} />
+                    <TouchableOpacity
+                      style={styles.modalTextContainer}
+                      onPress={() => {
+                        this.props.navigation.navigate(
+                          RouteConfig.CameraScreen,
+                          {
+                            [RouteParams.ProjectName]: this.props.navigation.getParam(
+                              RouteParams.ProjectName
+                            ),
+                            [RouteParams.Project]: project,
+                            [RouteParams.SetAlignmentGuides]: true,
+                          }
+                        );
+                        this.toggleModal();
+                      }}
+                    >
+                      <Text style={styles.modalText}>Set Alignment Guides</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </TouchableWithoutFeedback>
+            </Modal>
+          </View>
+        )}
+      </Consumer>
     );
   }
 }

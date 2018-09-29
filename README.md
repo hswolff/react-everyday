@@ -53,7 +53,7 @@ Project Screen
   - [ ] Rename project
   - [ ] Export project
   - [ ] Reminders.
-  - [ ] Reset alignment guides
+  - [x] Reset alignment guides
 - [ ] Show play icon
   - [ ] Stitch together all pictures into a video
   - [ ] Control FPS
@@ -77,7 +77,7 @@ Camera Screen
 Add alignment guide support
 
 - [ ] Do automatically when first take a photo in a new orient
-- [ ] Add option menu to reset alignment guides
+- [x] Add option menu to reset alignment guides
 - [x] Save positions in project data
 - [x] https://facebook.github.io/react-native/docs/0.56/panresponder
 

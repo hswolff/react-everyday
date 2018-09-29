@@ -25,6 +25,7 @@ import AlignmentGuides from './AlignmentGuides';
 enum UiState {
   AskingForPermissions,
   NoPermissions,
+  SetAlignmentGuides,
   CapturePhoto,
   ReviewPhoto,
 }
@@ -53,6 +54,7 @@ interface State {
     uri: string;
   };
   capturingPhoto: boolean;
+  draftAlignmentGuides?: AlignmentGuidePositions;
 }
 
 export default class CameraScreen extends React.Component<Props, State> {
@@ -62,6 +64,7 @@ export default class CameraScreen extends React.Component<Props, State> {
     uiState: UiState.AskingForPermissions,
     preview: undefined,
     capturingPhoto: false,
+    draftAlignmentGuides: undefined,
   };
 
   async componentDidMount() {
@@ -83,8 +86,19 @@ export default class CameraScreen extends React.Component<Props, State> {
     const dateString = this.props.navigation.getParam(
       RouteParams.CurrentDateString
     );
+    const setAlignmentGuides = this.props.navigation.getParam(
+      RouteParams.SetAlignmentGuides
+    );
 
     if (project) {
+      if (setAlignmentGuides) {
+        this.setState({
+          uiState: UiState.SetAlignmentGuides,
+          draftAlignmentGuides: project.alignmentGuides,
+        });
+        return;
+      }
+
       const photo = project.photos[dateString];
       if (photo) {
         this.setState({ preview: photo, uiState: UiState.ReviewPhoto });
@@ -137,13 +151,6 @@ export default class CameraScreen extends React.Component<Props, State> {
     this.props.navigation.goBack();
   };
 
-  private onAlignmentGuidesChanged = (
-    project: Project,
-    alignmentGuidePositions: AlignmentGuidePositions
-  ) => {
-    mutators.saveAlignmentGuidePositions({ project, alignmentGuidePositions });
-  };
-
   private saveCameraSettings = (
     project: Project,
     newSettings: CameraSettings
@@ -168,6 +175,48 @@ export default class CameraScreen extends React.Component<Props, State> {
         color="#FFF"
         onPress={() => this.props.navigation.goBack()}
       />
+    );
+
+    const topButtons = (project: Project) => (
+      <>
+        <MaterialCommunityIcons
+          name={flashIcons[project.cameraSettings.flashMode]}
+          color="white"
+          size={38}
+          style={{
+            position: 'absolute',
+            top: 60,
+            left: 30,
+          }}
+          onPress={() => {
+            this.saveCameraSettings(project, {
+              ...project.cameraSettings,
+              flashMode: flashModeOrder[
+                project.cameraSettings.flashMode
+              ] as FlashMode,
+            });
+          }}
+        />
+        <MaterialCommunityIcons
+          name="rotate-3d"
+          color="white"
+          size={38}
+          style={{
+            position: 'absolute',
+            top: 60,
+            right: 30,
+          }}
+          onPress={() => {
+            this.saveCameraSettings(project, {
+              ...project.cameraSettings,
+              type:
+                project.cameraSettings.type === Camera.Constants.Type.back
+                  ? Camera.Constants.Type.front
+                  : Camera.Constants.Type.back,
+            });
+          }}
+        />
+      </>
     );
 
     return (
@@ -208,53 +257,13 @@ export default class CameraScreen extends React.Component<Props, State> {
                   >
                     {project.cameraSettings.showGrid && (
                       <AlignmentGuides
-                        movable={true}
+                        movable={false}
                         center={project.alignmentGuides.center}
                         eyes={project.alignmentGuides.eyes}
                         mouth={project.alignmentGuides.mouth}
-                        onChange={event =>
-                          this.onAlignmentGuidesChanged(project, event)
-                        }
                       />
                     )}
-                    <MaterialCommunityIcons
-                      name={flashIcons[project.cameraSettings.flashMode]}
-                      color="white"
-                      size={38}
-                      style={{
-                        position: 'absolute',
-                        top: 60,
-                        left: 30,
-                      }}
-                      onPress={() => {
-                        this.saveCameraSettings(project, {
-                          ...project.cameraSettings,
-                          flashMode: flashModeOrder[
-                            project.cameraSettings.flashMode
-                          ] as FlashMode,
-                        });
-                      }}
-                    />
-                    <MaterialCommunityIcons
-                      name="rotate-3d"
-                      color="white"
-                      size={38}
-                      style={{
-                        position: 'absolute',
-                        top: 60,
-                        right: 30,
-                      }}
-                      onPress={() => {
-                        this.saveCameraSettings(project, {
-                          ...project.cameraSettings,
-                          type:
-                            project.cameraSettings.type ===
-                            Camera.Constants.Type.back
-                              ? Camera.Constants.Type.front
-                              : Camera.Constants.Type.back,
-                        });
-                      }}
-                    />
+                    {topButtons(project)}
                     <ControlBar>
                       {closeButton}
                       {capturingPhoto ? (
@@ -319,6 +328,54 @@ export default class CameraScreen extends React.Component<Props, State> {
                 );
               }
             }
+            case UiState.SetAlignmentGuides: {
+              if (this.state.draftAlignmentGuides) {
+                return (
+                  <SafeAreaView style={styles.root}>
+                    <Camera
+                      style={styles.fullScreen}
+                      type={project.cameraSettings.type}
+                      flashMode={project.cameraSettings.flashMode}
+                      ref={(ref: any) => {
+                        this.camera = ref;
+                      }}
+                    >
+                      <AlignmentGuides
+                        movable={true}
+                        center={this.state.draftAlignmentGuides.center}
+                        eyes={this.state.draftAlignmentGuides.eyes}
+                        mouth={this.state.draftAlignmentGuides.mouth}
+                        onChange={event =>
+                          this.setState({
+                            draftAlignmentGuides: event,
+                          })
+                        }
+                      />
+                      {topButtons(project)}
+                      <ControlBar>
+                        {closeButton}
+                        <Text style={{ color: 'white' }}>
+                          Set Alignment Guides
+                        </Text>
+                        <FontAwesome
+                          name="check-circle"
+                          size={buttonSize}
+                          color="#FFF"
+                          onPress={() => {
+                            mutators.saveAlignmentGuidePositions({
+                              project,
+                              alignmentGuidePositions: this.state
+                                .draftAlignmentGuides!,
+                            });
+                            this.props.navigation.goBack();
+                          }}
+                        />
+                      </ControlBar>
+                    </Camera>
+                  </SafeAreaView>
+                );
+              }
+            }
             default:
               return <View />;
           }
@@ -351,6 +408,7 @@ const ControlBar = ({ children }: ControlBarProps) => (
     style={{
       backgroundColor: 'black',
       position: 'absolute',
+      paddingBottom: 50,
       bottom: 0,
       left: 0,
       width: windowDimensions.width,
