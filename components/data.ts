@@ -1,6 +1,6 @@
 // @ts-ignore
 import createState from './react-copy-write';
-import { FileSystem } from 'expo';
+import { FileSystem, Camera } from 'expo';
 import { Dimensions } from 'react-native';
 
 const screen = Dimensions.get('screen');
@@ -21,12 +21,25 @@ export interface AlignmentGuidePositions {
   mouth: number;
 }
 
+export enum FlashMode {
+  off = 'off',
+  on = 'on',
+  auto = 'auto',
+  torch = 'torch',
+}
+
+export interface CameraSettings {
+  type: string;
+  flashMode: FlashMode;
+}
+
 export interface Project {
   title: string;
   photosTaken: number;
   lastPhoto?: PhotoDay;
   photos: ProjectPhotos;
   alignmentGuides: AlignmentGuidePositions;
+  cameraSettings: CameraSettings;
 }
 
 export const projectUtilities = {
@@ -37,6 +50,10 @@ export const projectUtilities = {
     title: '',
     photosTaken: 0,
     photos: {},
+    cameraSettings: {
+      type: Camera.Constants.Type.front,
+      flashMode: FlashMode.off,
+    },
     alignmentGuides: {
       center: screen.width * 0.5,
       eyes: screen.height * 0.3,
@@ -115,6 +132,19 @@ export const mutators = {
       const foundProject = selectors.getProject(project.title)(draft);
 
       foundProject.alignmentGuides = alignmentGuidePositions;
+    });
+  },
+  saveCameraSettings({
+    project,
+    cameraSettings,
+  }: {
+    project: Project;
+    cameraSettings: CameraSettings;
+  }) {
+    mutate((draft: ApplicationState) => {
+      const foundProject = selectors.getProject(project.title)(draft);
+
+      foundProject.cameraSettings = cameraSettings;
     });
   },
 };

@@ -8,7 +8,13 @@ import {
   Dimensions,
 } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { mutators, Project, AlignmentGuidePositions } from './data';
+import {
+  mutators,
+  Project,
+  AlignmentGuidePositions,
+  CameraSettings,
+  FlashMode,
+} from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import { Camera, Permissions, CameraObject, PictureResponse } from 'expo';
 import { RouteParams } from './Router';
@@ -25,12 +31,6 @@ const windowDimensions = Dimensions.get('window');
 const buttonSize = 48;
 const buttonLargeSize = 64;
 
-enum FlashMode {
-  off = 'off',
-  on = 'on',
-  auto = 'auto',
-  torch = 'torch',
-}
 const flashModeOrder = {
   off: 'on',
   on: 'auto',
@@ -47,12 +47,11 @@ const flashIcons = {
 interface Props extends NavigationScreenProps {}
 interface State {
   uiState: UiState;
-  type: string;
   preview?: {
     uri: string;
   };
   capturingPhoto: boolean;
-  flashMode: FlashMode;
+  cameraSettings: CameraSettings;
 }
 
 export default class CameraScreen extends React.Component<Props, State> {
@@ -60,10 +59,12 @@ export default class CameraScreen extends React.Component<Props, State> {
 
   state: State = {
     uiState: UiState.AskingForPermissions,
-    type: Camera.Constants.Type.back,
     preview: undefined,
     capturingPhoto: false,
-    flashMode: FlashMode.off,
+    cameraSettings: {
+      type: Camera.Constants.Type.back,
+      flashMode: FlashMode.off,
+    },
   };
 
   async componentDidMount() {
@@ -87,6 +88,10 @@ export default class CameraScreen extends React.Component<Props, State> {
     );
 
     if (project) {
+      this.setState({
+        cameraSettings: project.cameraSettings,
+      });
+
       const photo = project.photos[dateString];
       if (photo) {
         this.setState({ preview: photo, uiState: UiState.ReviewPhoto });
@@ -148,6 +153,16 @@ export default class CameraScreen extends React.Component<Props, State> {
     mutators.saveAlignmentGuidePositions({ project, alignmentGuidePositions });
   };
 
+  private saveCameraSettings = () => {
+    const project: Project = this.props.navigation.getParam(
+      RouteParams.Project
+    );
+    mutators.saveCameraSettings({
+      project,
+      cameraSettings: this.state.cameraSettings,
+    });
+  };
+
   render() {
     const { uiState, preview, capturingPhoto } = this.state;
     const project: Project = this.props.navigation.getParam(
@@ -190,8 +205,8 @@ export default class CameraScreen extends React.Component<Props, State> {
           <SafeAreaView style={styles.root}>
             <Camera
               style={styles.fullScreen}
-              type={this.state.type}
-              flashMode={this.state.flashMode}
+              type={this.state.cameraSettings.type}
+              flashMode={this.state.cameraSettings.flashMode}
               ref={(ref: any) => {
                 this.camera = ref;
               }}
@@ -204,7 +219,7 @@ export default class CameraScreen extends React.Component<Props, State> {
                 onChange={this.onAlignmentGuidesChanged}
               />
               <MaterialCommunityIcons
-                name={flashIcons[this.state.flashMode]}
+                name={flashIcons[this.state.cameraSettings.flashMode]}
                 color="white"
                 size={38}
                 style={{
@@ -213,11 +228,17 @@ export default class CameraScreen extends React.Component<Props, State> {
                   left: 30,
                 }}
                 onPress={() => {
-                  this.setState({
-                    flashMode: flashModeOrder[
-                      this.state.flashMode
-                    ] as FlashMode,
-                  });
+                  this.setState(
+                    {
+                      cameraSettings: {
+                        ...this.state.cameraSettings,
+                        flashMode: flashModeOrder[
+                          this.state.cameraSettings.flashMode
+                        ] as FlashMode,
+                      },
+                    },
+                    this.saveCameraSettings
+                  );
                 }}
               />
               <MaterialCommunityIcons
@@ -230,12 +251,19 @@ export default class CameraScreen extends React.Component<Props, State> {
                   right: 30,
                 }}
                 onPress={() => {
-                  this.setState({
-                    type:
-                      this.state.type === Camera.Constants.Type.back
-                        ? Camera.Constants.Type.front
-                        : Camera.Constants.Type.back,
-                  });
+                  this.setState(
+                    {
+                      cameraSettings: {
+                        ...this.state.cameraSettings,
+                        type:
+                          this.state.cameraSettings.type ===
+                          Camera.Constants.Type.back
+                            ? Camera.Constants.Type.front
+                            : Camera.Constants.Type.back,
+                      },
+                    },
+                    this.saveCameraSettings
+                  );
                 }}
               />
               <ControlBar>

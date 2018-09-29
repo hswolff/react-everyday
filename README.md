@@ -72,7 +72,7 @@ Camera Screen
 - [x] After take photo show preview.
 - [x] Then allow user to retake or accept
 - [ ] Allow a user to pick a photo from their photo library
-- [ ] Persist camera settings. i.e. front/back camera, flash setting, etc.
+- [x] Persist camera settings. i.e. front/back camera, flash setting, etc.
 
 Add alignment guide support
 
