@@ -18,7 +18,13 @@ export default class Root extends React.Component {
     return null;
   };
 
+  private async clearData() {
+    await AsyncStorage.setItem(applicationStateKey, '');
+    await AsyncStorage.setItem(String(navigationPersistenceKey), '');
+  }
+
   async componentDidMount() {
+    // await this.clearData();
     const rawData = await AsyncStorage.getItem(applicationStateKey);
 
     this.setState({
