@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { NavigationScreenProps, SafeAreaView } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
-import { Project, mutators } from './data';
+import { Project, mutators, projectUtilities } from './data';
 
 const halfWindow = Dimensions.get('window').width / 2;
 const iconSize = {
@@ -29,7 +29,7 @@ export default class AddProjectScreen extends React.Component<Props, State> {
     };
   };
 
-  state = { title: '', photosTaken: 0, photos: {} };
+  state = projectUtilities.createNewProject();
 
   private onCreate = async () => {
     if (this.state.title === '') {

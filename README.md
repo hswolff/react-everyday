@@ -72,13 +72,14 @@ Camera Screen
 - [x] After take photo show preview.
 - [x] Then allow user to retake or accept
 - [ ] Allow a user to pick a photo from their photo library
+- [ ] Persist camera settings. i.e. front/back camera, flash setting, etc.
 
 Add alignment guide support
 
 - [ ] Do automatically when first take a photo in a new orient
 - [ ] Add option menu to reset alignment guides
-- [ ] Save positions in project data
-- [ ] https://facebook.github.io/react-native/docs/0.56/panresponder
+- [x] Save positions in project data
+- [x] https://facebook.github.io/react-native/docs/0.56/panresponder
 
 Add ability to set reminders to take photo
 

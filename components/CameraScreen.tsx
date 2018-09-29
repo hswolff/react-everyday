@@ -8,10 +8,11 @@ import {
   Dimensions,
 } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
-import { mutators, Project } from './data';
+import { mutators, Project, AlignmentGuidePositions } from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import { Camera, Permissions, CameraObject, PictureResponse } from 'expo';
 import { RouteParams } from './Router';
+import AlignmentGuides from './AlignmentGuides';
 
 enum UiState {
   AskingForPermissions,
@@ -138,8 +139,20 @@ export default class CameraScreen extends React.Component<Props, State> {
     this.props.navigation.goBack();
   };
 
+  private onAlignmentGuidesChanged = (
+    alignmentGuidePositions: AlignmentGuidePositions
+  ) => {
+    const project: Project = this.props.navigation.getParam(
+      RouteParams.Project
+    );
+    mutators.saveAlignmentGuidePositions({ project, alignmentGuidePositions });
+  };
+
   render() {
     const { uiState, preview, capturingPhoto } = this.state;
+    const project: Project = this.props.navigation.getParam(
+      RouteParams.Project
+    );
 
     const closeButton = (
       <FontAwesome
@@ -183,6 +196,13 @@ export default class CameraScreen extends React.Component<Props, State> {
                 this.camera = ref;
               }}
             >
+              <AlignmentGuides
+                movable={true}
+                center={project.alignmentGuides.center}
+                eyes={project.alignmentGuides.eyes}
+                mouth={project.alignmentGuides.mouth}
+                onChange={this.onAlignmentGuidesChanged}
+              />
               <MaterialCommunityIcons
                 name={flashIcons[this.state.flashMode]}
                 color="white"

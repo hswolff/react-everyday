@@ -1,6 +1,9 @@
 // @ts-ignore
 import createState from './react-copy-write';
 import { FileSystem } from 'expo';
+import { Dimensions } from 'react-native';
+
+const screen = Dimensions.get('screen');
 
 export interface PhotoDay {
   date: string;
@@ -12,31 +15,35 @@ export interface ProjectPhotos {
   [key: string]: PhotoDay;
 }
 
+export interface AlignmentGuidePositions {
+  center: number;
+  eyes: number;
+  mouth: number;
+}
+
 export interface Project {
   title: string;
   photosTaken: number;
   lastPhoto?: PhotoDay;
   photos: ProjectPhotos;
+  alignmentGuides: AlignmentGuidePositions;
 }
 
-const projectUtilities = {
+export const projectUtilities = {
   folderPath(projectName: string) {
     return FileSystem.documentDirectory + encodeURIComponent(projectName) + '/';
   },
+  createNewProject: (): Project => ({
+    title: '',
+    photosTaken: 0,
+    photos: {},
+    alignmentGuides: {
+      center: screen.width * 0.5,
+      eyes: screen.height * 0.3,
+      mouth: screen.height * 0.6,
+    },
+  }),
 };
-
-export const projectFixtures = [
-  {
-    title: 'First Year',
-    photosTaken: 0,
-    photos: {},
-  },
-  {
-    title: 'Green Plant',
-    photosTaken: 0,
-    photos: {},
-  },
-];
 
 export interface ApplicationState {
   projects: Array<Project>;
@@ -63,7 +70,8 @@ export const mutators = {
       draft.projects.push(project);
     });
     await FileSystem.makeDirectoryAsync(
-      projectUtilities.folderPath(project.title)
+      projectUtilities.folderPath(project.title),
+      { intermediates: true }
     );
   },
   deleteProject(projectName: string) {
@@ -94,6 +102,19 @@ export const mutators = {
         date: dateKey,
         uri: filePath!,
       };
+    });
+  },
+  saveAlignmentGuidePositions({
+    project,
+    alignmentGuidePositions,
+  }: {
+    project: Project;
+    alignmentGuidePositions: AlignmentGuidePositions;
+  }) {
+    mutate((draft: ApplicationState) => {
+      const foundProject = selectors.getProject(project.title)(draft);
+
+      foundProject.alignmentGuides = alignmentGuidePositions;
     });
   },
 };
