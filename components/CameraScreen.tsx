@@ -14,6 +14,8 @@ import {
   AlignmentGuidePositions,
   CameraSettings,
   FlashMode,
+  Consumer,
+  selectors,
 } from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import { Camera, Permissions, CameraObject } from 'expo';
@@ -51,7 +53,6 @@ interface State {
     uri: string;
   };
   capturingPhoto: boolean;
-  cameraSettings: CameraSettings;
 }
 
 export default class CameraScreen extends React.Component<Props, State> {
@@ -61,11 +62,6 @@ export default class CameraScreen extends React.Component<Props, State> {
     uiState: UiState.AskingForPermissions,
     preview: undefined,
     capturingPhoto: false,
-    cameraSettings: {
-      type: Camera.Constants.Type.back,
-      flashMode: FlashMode.off,
-      showGrid: true,
-    },
   };
 
   async componentDidMount() {
@@ -89,10 +85,6 @@ export default class CameraScreen extends React.Component<Props, State> {
     );
 
     if (project) {
-      this.setState({
-        cameraSettings: project.cameraSettings,
-      });
-
       const photo = project.photos[dateString];
       if (photo) {
         this.setState({ preview: photo, uiState: UiState.ReviewPhoto });
@@ -146,28 +138,27 @@ export default class CameraScreen extends React.Component<Props, State> {
   };
 
   private onAlignmentGuidesChanged = (
+    project: Project,
     alignmentGuidePositions: AlignmentGuidePositions
   ) => {
-    const project: Project = this.props.navigation.getParam(
-      RouteParams.Project
-    );
     mutators.saveAlignmentGuidePositions({ project, alignmentGuidePositions });
   };
 
-  private saveCameraSettings = () => {
-    const project: Project = this.props.navigation.getParam(
-      RouteParams.Project
-    );
+  private saveCameraSettings = (
+    project: Project,
+    newSettings: CameraSettings
+  ) => {
     mutators.saveCameraSettings({
       project,
-      cameraSettings: this.state.cameraSettings,
+      cameraSettings: newSettings,
     });
   };
 
   render() {
     const { uiState, preview, capturingPhoto } = this.state;
-    const project: Project = this.props.navigation.getParam(
-      RouteParams.Project
+    const projectName: string = this.props.navigation.getParam(
+      RouteParams.ProjectName,
+      'Details'
     );
 
     const closeButton = (
@@ -179,168 +170,161 @@ export default class CameraScreen extends React.Component<Props, State> {
       />
     );
 
-    switch (uiState) {
-      case UiState.AskingForPermissions:
-        return (
-          <SafeAreaView style={styles.root}>
-            <ControlBar>
-              <View />
-            </ControlBar>
-          </SafeAreaView>
-        );
-      case UiState.NoPermissions: {
-        return (
-          <SafeAreaView
-            style={[
-              styles.root,
-              { justifyContent: 'center', alignItems: 'center' },
-            ]}
-          >
-            <Text>No access to camera</Text>
-            <ControlBar>{closeButton}</ControlBar>
-          </SafeAreaView>
-        );
-      }
-      case UiState.CapturePhoto: {
-        return (
-          <SafeAreaView style={styles.root}>
-            <Camera
-              style={styles.fullScreen}
-              type={this.state.cameraSettings.type}
-              flashMode={this.state.cameraSettings.flashMode}
-              ref={(ref: any) => {
-                this.camera = ref;
-              }}
-            >
-              {this.state.cameraSettings.showGrid && (
-                <AlignmentGuides
-                  movable={true}
-                  center={project.alignmentGuides.center}
-                  eyes={project.alignmentGuides.eyes}
-                  mouth={project.alignmentGuides.mouth}
-                  onChange={this.onAlignmentGuidesChanged}
-                />
-              )}
-              <MaterialCommunityIcons
-                name={flashIcons[this.state.cameraSettings.flashMode]}
-                color="white"
-                size={38}
-                style={{
-                  position: 'absolute',
-                  top: 60,
-                  left: 30,
-                }}
-                onPress={() => {
-                  this.setState(
-                    {
-                      cameraSettings: {
-                        ...this.state.cameraSettings,
-                        flashMode: flashModeOrder[
-                          this.state.cameraSettings.flashMode
-                        ] as FlashMode,
-                      },
-                    },
-                    this.saveCameraSettings
-                  );
-                }}
-              />
-              <MaterialCommunityIcons
-                name="rotate-3d"
-                color="white"
-                size={38}
-                style={{
-                  position: 'absolute',
-                  top: 60,
-                  right: 30,
-                }}
-                onPress={() => {
-                  this.setState(
-                    {
-                      cameraSettings: {
-                        ...this.state.cameraSettings,
-                        type:
-                          this.state.cameraSettings.type ===
-                          Camera.Constants.Type.back
-                            ? Camera.Constants.Type.front
-                            : Camera.Constants.Type.back,
-                      },
-                    },
-                    this.saveCameraSettings
-                  );
-                }}
-              />
-              <ControlBar>
-                {closeButton}
-                {capturingPhoto ? (
-                  <FontAwesome
-                    name="spinner"
-                    size={buttonLargeSize}
-                    color="#fff"
-                    style={styles.centerButton}
-                  />
-                ) : (
-                  <FontAwesome
-                    name="camera"
-                    size={buttonLargeSize}
-                    color="#FFF"
-                    onPress={this.takePhoto}
-                    style={styles.centerButton}
-                  />
-                )}
-                <MaterialCommunityIcons
-                  name={
-                    this.state.cameraSettings.showGrid ? 'grid' : 'grid-off'
-                  }
-                  color="white"
-                  size={buttonSize}
-                  onPress={() => {
-                    this.setState(
-                      {
-                        cameraSettings: {
-                          ...this.state.cameraSettings,
-                          showGrid: !this.state.cameraSettings.showGrid,
-                        },
-                      },
-                      this.saveCameraSettings
-                    );
-                  }}
-                />
-              </ControlBar>
-            </Camera>
-          </SafeAreaView>
-        );
-      }
-      case UiState.ReviewPhoto: {
-        if (preview) {
-          return (
-            <SafeAreaView style={{ flex: 1 }}>
-              <Image
-                style={[styles.fullScreen, styles.picturePreview]}
-                source={{ uri: preview.uri }}
-              />
-              <ControlBar>
-                {closeButton}
-                <FontAwesome
-                  name="undo"
-                  size={buttonLargeSize}
-                  color="#FFF"
-                  onPress={this.redoPhoto}
-                  style={styles.centerButton}
-                />
-                <FontAwesome
-                  name="check-circle"
-                  size={buttonSize}
-                  color="#FFF"
-                  onPress={this.savePhoto}
-                />
-              </ControlBar>
-            </SafeAreaView>
-          );
-        }
-      }
-      default:
-        return <View />;
-    }
+    return (
+      <Consumer select={[selectors.getProject(projectName)]}>
+        {(project: Project) => {
+          switch (uiState) {
+            case UiState.AskingForPermissions:
+              return (
+                <SafeAreaView style={styles.root}>
+                  <ControlBar>
+                    <View />
+                  </ControlBar>
+                </SafeAreaView>
+              );
+            case UiState.NoPermissions: {
+              return (
+                <SafeAreaView
+                  style={[
+                    styles.root,
+                    { justifyContent: 'center', alignItems: 'center' },
+                  ]}
+                >
+                  <Text>No access to camera</Text>
+                  <ControlBar>{closeButton}</ControlBar>
+                </SafeAreaView>
+              );
+            }
+            case UiState.CapturePhoto: {
+              return (
+                <SafeAreaView style={styles.root}>
+                  <Camera
+                    style={styles.fullScreen}
+                    type={project.cameraSettings.type}
+                    flashMode={project.cameraSettings.flashMode}
+                    ref={(ref: any) => {
+                      this.camera = ref;
+                    }}
+                  >
+                    {project.cameraSettings.showGrid && (
+                      <AlignmentGuides
+                        movable={true}
+                        center={project.alignmentGuides.center}
+                        eyes={project.alignmentGuides.eyes}
+                        mouth={project.alignmentGuides.mouth}
+                        onChange={event =>
+                          this.onAlignmentGuidesChanged(project, event)
+                        }
+                      />
+                    )}
+                    <MaterialCommunityIcons
+                      name={flashIcons[project.cameraSettings.flashMode]}
+                      color="white"
+                      size={38}
+                      style={{
+                        position: 'absolute',
+                        top: 60,
+                        left: 30,
+                      }}
+                      onPress={() => {
+                        this.saveCameraSettings(project, {
+                          ...project.cameraSettings,
+                          flashMode: flashModeOrder[
+                            project.cameraSettings.flashMode
+                          ] as FlashMode,
+                        });
+                      }}
+                    />
+                    <MaterialCommunityIcons
+                      name="rotate-3d"
+                      color="white"
+                      size={38}
+                      style={{
+                        position: 'absolute',
+                        top: 60,
+                        right: 30,
+                      }}
+                      onPress={() => {
+                        this.saveCameraSettings(project, {
+                          ...project.cameraSettings,
+                          type:
+                            project.cameraSettings.type ===
+                            Camera.Constants.Type.back
+                              ? Camera.Constants.Type.front
+                              : Camera.Constants.Type.back,
+                        });
+                      }}
+                    />
+                    <ControlBar>
+                      {closeButton}
+                      {capturingPhoto ? (
+                        <FontAwesome
+                          name="spinner"
+                          size={buttonLargeSize}
+                          color="#fff"
+                          style={styles.centerButton}
+                        />
+                      ) : (
+                        <FontAwesome
+                          name="camera"
+                          size={buttonLargeSize}
+                          color="#FFF"
+                          onPress={this.takePhoto}
+                          style={styles.centerButton}
+                        />
+                      )}
+                      <MaterialCommunityIcons
+                        name={
+                          project.cameraSettings.showGrid ? 'grid' : 'grid-off'
+                        }
+                        color="white"
+                        size={buttonSize}
+                        onPress={() => {
+                          this.saveCameraSettings(project, {
+                            ...project.cameraSettings,
+                            showGrid: !project.cameraSettings.showGrid,
+                          });
+                        }}
+                      />
+                    </ControlBar>
+                  </Camera>
+                </SafeAreaView>
+              );
+            }
+            case UiState.ReviewPhoto: {
+              if (preview) {
+                return (
+                  <SafeAreaView style={{ flex: 1 }}>
+                    <Image
+                      style={[styles.fullScreen, styles.picturePreview]}
+                      source={{ uri: preview.uri }}
+                    />
+                    <ControlBar>
+                      {closeButton}
+                      <FontAwesome
+                        name="undo"
+                        size={buttonLargeSize}
+                        color="#FFF"
+                        onPress={this.redoPhoto}
+                        style={styles.centerButton}
+                      />
+                      <FontAwesome
+                        name="check-circle"
+                        size={buttonSize}
+                        color="#FFF"
+                        onPress={this.savePhoto}
+                      />
+                    </ControlBar>
+                  </SafeAreaView>
+                );
+              }
+            }
+            default:
+              return <View />;
+          }
+        }}
+      </Consumer>
+    );
   }
 }
 
