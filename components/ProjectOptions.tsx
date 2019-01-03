@@ -87,6 +87,25 @@ export default class ProjectOptions extends React.Component<Props, State> {
                     >
                       <Text style={styles.modalText}>Set Alignment Guides</Text>
                     </TouchableOpacity>
+                    <View style={styles.modalTextDivider} />
+                    <TouchableOpacity
+                      style={styles.modalTextContainer}
+                      onPress={() => {
+                        this.props.navigation.navigate(
+                          RouteConfig.CameraScreen,
+                          {
+                            [RouteParams.ProjectName]: this.props.navigation.getParam(
+                              RouteParams.ProjectName
+                            ),
+                            [RouteParams.Project]: project,
+                            [RouteParams.SetAlignmentGuides]: true,
+                          }
+                        );
+                        this.toggleModal();
+                      }}
+                    >
+                      <Text style={styles.modalText}>Reminders</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
               </TouchableWithoutFeedback>
