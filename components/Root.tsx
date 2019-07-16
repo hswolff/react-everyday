@@ -1,7 +1,7 @@
 import React from 'react';
 import { AsyncStorage } from 'react-native';
 import { Consumer, ApplicationState, initialState } from './data';
-import Router from './Router';
+import Router from './Router/createRouter';
 import { Provider } from './data';
 
 const applicationStateKey = 'ApplicationState';
