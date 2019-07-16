@@ -1,6 +1,7 @@
 // @ts-ignore
 import createState from './react-copy-write';
-import { FileSystem, Camera } from 'expo';
+import * as FileSystem from 'expo-file-system';
+import { Camera } from 'expo-camera';
 import { Dimensions } from 'react-native';
 
 const screen = Dimensions.get('screen');

@@ -18,7 +18,8 @@ import {
   selectors,
 } from './data';
 import { NavigationScreenProps } from 'react-navigation';
-import { Camera, Permissions, CameraObject } from 'expo';
+import * as Permissions from 'expo-permissions';
+import { Camera } from 'expo-camera';
 import { RouteParams } from './Router';
 import AlignmentGuides from './AlignmentGuides';
 
@@ -58,7 +59,7 @@ interface State {
 }
 
 export default class CameraScreen extends React.Component<Props, State> {
-  camera?: CameraObject;
+  camera?: Camera;
 
   state: State = {
     uiState: UiState.AskingForPermissions,
