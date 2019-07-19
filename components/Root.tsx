@@ -1,47 +1,49 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AsyncStorage } from 'react-native';
 import { Consumer, ApplicationState, initialState } from './data';
 import Router from './Router/createRouter';
 import { Provider } from './data';
 
-const applicationStateKey = 'ApplicationState';
-
 const navigationPersistenceKey = __DEV__ ? 'NavigationStateDEV' : null;
 
-export default class Root extends React.Component {
-  state = {
-    initialState: null,
+function useAsyncStorage(applicationStateKey = 'ApplicationState') {
+  const [storedData, setStoredData] = useState(null);
+
+  const clearData = async () => {
+    await AsyncStorage.setItem(applicationStateKey, '');
+    await AsyncStorage.setItem(String(navigationPersistenceKey), '');
   };
 
-  private onDataChange = (data: ApplicationState) => {
+  const onMount = async () => {
+    // await clearData();
+    const rawData = await AsyncStorage.getItem(applicationStateKey);
+
+    setStoredData(rawData ? JSON.parse(rawData) : storedData);
+  };
+
+  useEffect(() => {
+    onMount();
+  }, []);
+
+  const onDataChange = (data: ApplicationState) => {
     AsyncStorage.setItem(applicationStateKey, JSON.stringify(data));
     return null;
   };
 
-  private async clearData() {
-    await AsyncStorage.setItem(applicationStateKey, '');
-    await AsyncStorage.setItem(String(navigationPersistenceKey), '');
+  return [storedData, onDataChange];
+}
+
+export default function Root() {
+  const [state, onStateChange] = useAsyncStorage();
+
+  if (!state) {
+    return null;
   }
 
-  async componentDidMount() {
-    // await this.clearData();
-    const rawData = await AsyncStorage.getItem(applicationStateKey);
-
-    this.setState({
-      initialState: rawData ? JSON.parse(rawData) : initialState,
-    });
-  }
-
-  render() {
-    if (!this.state.initialState) {
-      return null;
-    }
-
-    return (
-      <Provider initialState={this.state.initialState}>
-        <Consumer>{this.onDataChange}</Consumer>
-        <Router persistenceKey={navigationPersistenceKey} />
-      </Provider>
-    );
-  }
+  return (
+    <Provider initialState={state}>
+      <Consumer>{onStateChange}</Consumer>
+      <Router persistenceKey={navigationPersistenceKey} />
+    </Provider>
+  );
 }
