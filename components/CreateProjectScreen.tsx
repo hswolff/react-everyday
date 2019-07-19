@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { NavigationScreenProps, SafeAreaView } from 'react-navigation';
 import { FontAwesome } from '@expo/vector-icons';
-import { Project, mutators, projectUtilities } from './data';
+import { mutators, projectUtilities } from './data';
 
 const halfWindow = Dimensions.get('window').width / 2;
 const iconSize = {
@@ -19,80 +19,71 @@ const iconSize = {
   height: halfWindow * 0.65,
 };
 
-interface Props extends NavigationScreenProps {}
-interface State extends Project {}
+export default function AddProjectScreen(props: NavigationScreenProps) {
+  const [state, setState] = useState(projectUtilities.createNewProject);
 
-export default class AddProjectScreen extends React.Component<Props, State> {
-  static navigationOptions = () => {
-    return {
-      title: 'Create Project',
-    };
-  };
-
-  state = projectUtilities.createNewProject();
-
-  private onCreate = async () => {
-    if (this.state.title === '') {
+  const onCreate = async () => {
+    if (state.title === '') {
       Alert.alert('Enter a Project name');
       return;
     }
-    await mutators.addProject(this.state);
-    this.props.navigation.goBack();
+    await mutators.addProject(state);
+    props.navigation.goBack();
   };
 
-  render() {
-    return (
-      <SafeAreaView style={styles.root}>
-        <ScrollView
-          contentContainerStyle={styles.scrollView}
-          keyboardDismissMode="on-drag"
-        >
-          <View style={styles.content}>
+  return (
+    <SafeAreaView style={styles.root}>
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        keyboardDismissMode="on-drag"
+      >
+        <View style={styles.content}>
+          <FontAwesome
+            name="road"
+            size={halfWindow}
+            color="#000"
+            style={{ alignSelf: 'center' }}
+          />
+          <Text style={styles.title}>Create Project</Text>
+          <TextInput
+            style={styles.inputTitle}
+            placeholder="Title"
+            onChangeText={title => setState(project => ({ ...project, title }))}
+            returnKeyType="done"
+            onSubmitEditing={onCreate}
+            autoFocus
+          />
+        </View>
+        <View style={styles.footer}>
+          <TouchableOpacity
+            style={styles.footerButton}
+            onPress={() => props.navigation.goBack()}
+          >
+            <Text style={styles.footerButtonLabel}>Cancel</Text>
             <FontAwesome
-              name="road"
-              size={halfWindow}
-              color="#000"
-              style={{ alignSelf: 'center' }}
+              name="times-circle"
+              size={iconSize.width}
+              color="red"
             />
-            <Text style={styles.title}>Create Project</Text>
-            <TextInput
-              style={styles.inputTitle}
-              placeholder="Title"
-              onChangeText={title => this.setState({ title })}
-              returnKeyType="done"
-              onSubmitEditing={this.onCreate}
-              autoFocus
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.footerButton} onPress={onCreate}>
+            <Text style={styles.footerButtonLabel}>Create</Text>
+            <FontAwesome
+              name="plus-circle"
+              size={iconSize.width}
+              color="green"
             />
-          </View>
-          <View style={styles.footer}>
-            <TouchableOpacity
-              style={styles.footerButton}
-              onPress={() => this.props.navigation.goBack()}
-            >
-              <Text style={styles.footerButtonLabel}>Cancel</Text>
-              <FontAwesome
-                name="times-circle"
-                size={iconSize.width}
-                color="red"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.footerButton}
-              onPress={this.onCreate}
-            >
-              <Text style={styles.footerButtonLabel}>Create</Text>
-              <FontAwesome
-                name="plus-circle"
-                size={iconSize.width}
-                color="green"
-              />
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    );
-  }
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
 }
+AddProjectScreen.navigationOptions = () => {
+  return {
+    title: 'Create Project',
+  };
+};
 
 const styles = StyleSheet.create({
   root: {
