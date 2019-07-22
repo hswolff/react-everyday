@@ -17,43 +17,41 @@ interface Props extends Project {
   };
 }
 
-export default class ProjectListItem extends React.Component<Props> {
-  render() {
-    const { separators, title, lastPhoto } = this.props;
-    return (
-      <TouchableHighlight
-        style={styles.root}
-        underlayColor="#CCC"
-        onShowUnderlay={separators.highlight}
-        onHideUnderlay={separators.unhighlight}
-        onPress={() => this.props.onPress(title)}
-      >
-        <>
-          <View style={styles.left}>
-            <Text>{title}</Text>
-            <Text>{lastPhoto != null && lastPhoto.date.toLocaleString()}</Text>
-          </View>
-          <View style={styles.right}>
-            {lastPhoto == null ? (
-              <FontAwesome
-                name="user-o"
-                color="#000"
-                style={styles.rightEmpty}
-              />
-            ) : (
-              <Image
-                style={styles.rightImage}
-                source={{
-                  uri:
-                    'https://facebook.github.io/react-native/docs/assets/favicon.png',
-                }}
-              />
-            )}
-          </View>
-        </>
-      </TouchableHighlight>
-    );
-  }
+export default function ProjectListItem({
+  separators,
+  title,
+  lastPhoto,
+  onPress,
+}: Props) {
+  return (
+    <TouchableHighlight
+      style={styles.root}
+      underlayColor="#CCC"
+      onShowUnderlay={separators.highlight}
+      onHideUnderlay={separators.unhighlight}
+      onPress={() => onPress(title)}
+    >
+      <>
+        <View style={styles.left}>
+          <Text>{title}</Text>
+          <Text>{lastPhoto != null && lastPhoto.date.toLocaleString()}</Text>
+        </View>
+        <View style={styles.right}>
+          {lastPhoto == null ? (
+            <FontAwesome name="user-o" color="#000" style={styles.rightEmpty} />
+          ) : (
+            <Image
+              style={styles.rightImage}
+              source={{
+                uri:
+                  'https://facebook.github.io/react-native/docs/assets/favicon.png',
+              }}
+            />
+          )}
+        </View>
+      </>
+    </TouchableHighlight>
+  );
 }
 
 const verticalPadding = 20;

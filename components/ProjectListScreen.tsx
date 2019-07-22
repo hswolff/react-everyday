@@ -19,79 +19,75 @@ import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const deviceWidth = Dimensions.get('window').width;
 
-interface Props extends NavigationScreenProps {}
-
-export default class ProjectListScreen extends React.Component<Props> {
-  static navigationOptions = ({
-    navigation,
-  }: NavigationScreenProps): NavigationStackScreenOptions => ({
-    title: 'Projects',
-    headerRight: (
-      <TouchableOpacity
-        onPress={() => navigation.navigate(RouteConfig.CreateProject)}
-        style={styles.addButton}
-      >
-        <FontAwesome name="plus" size={26} color="black" />
-      </TouchableOpacity>
-    ),
-  });
-
-  private onPress = (title: string) => {
-    this.props.navigation.navigate(RouteConfig.Project, {
+export default function ProjectListScreen(props: NavigationScreenProps) {
+  const onPress = (title: string) => {
+    props.navigation.navigate(RouteConfig.Project, {
       [RouteParams.ProjectName]: title,
     });
   };
 
-  render() {
-    return (
-      <View style={styles.root}>
-        <Consumer select={[selectors.projects]}>
-          {(projects: Array<Project>) =>
-            projects.length ? (
-              <FlatList
-                data={projects}
-                keyExtractor={(i: Project, index) => i.title + index}
-                ItemSeparatorComponent={
-                  Platform.OS === 'ios'
-                    ? ({ highlighted }) => (
-                        <View
-                          style={[
-                            styles.separator,
-                            highlighted && { marginLeft: 0 },
-                          ]}
-                        />
-                      )
-                    : null
-                }
-                renderItem={({ item, separators }) => (
-                  <ProjectListItem
-                    onPress={this.onPress}
-                    separators={separators}
-                    {...item}
-                  />
-                )}
-              />
-            ) : (
-              <TouchableOpacity
-                style={styles.empty}
-                onPress={() =>
-                  this.props.navigation.navigate(RouteConfig.CreateProject)
-                }
-              >
-                <MaterialCommunityIcons
-                  name="flask-empty-outline"
-                  size={deviceWidth / 2}
-                  color="black"
+  return (
+    <View style={styles.root}>
+      <Consumer select={[selectors.projects]}>
+        {(projects: Array<Project>) =>
+          projects.length ? (
+            <FlatList
+              data={projects}
+              keyExtractor={(i: Project, index) => i.title + index}
+              ItemSeparatorComponent={
+                Platform.OS === 'ios'
+                  ? ({ highlighted }) => (
+                      <View
+                        style={[
+                          styles.separator,
+                          highlighted && { marginLeft: 0 },
+                        ]}
+                      />
+                    )
+                  : null
+              }
+              renderItem={({ item, separators }) => (
+                <ProjectListItem
+                  onPress={onPress}
+                  separators={separators}
+                  {...item}
                 />
-                <Text style={{ fontSize: 38 }}>Create a Project</Text>
-              </TouchableOpacity>
-            )
-          }
-        </Consumer>
-      </View>
-    );
-  }
+              )}
+            />
+          ) : (
+            <TouchableOpacity
+              style={styles.empty}
+              onPress={() =>
+                props.navigation.navigate(RouteConfig.CreateProject)
+              }
+            >
+              <MaterialCommunityIcons
+                name="flask-empty-outline"
+                size={deviceWidth / 2}
+                color="black"
+              />
+              <Text style={{ fontSize: 38 }}>Create a Project</Text>
+            </TouchableOpacity>
+          )
+        }
+      </Consumer>
+    </View>
+  );
 }
+
+ProjectListScreen.navigationOptions = ({
+  navigation,
+}: NavigationScreenProps): NavigationStackScreenOptions => ({
+  title: 'Projects',
+  headerRight: (
+    <TouchableOpacity
+      onPress={() => navigation.navigate(RouteConfig.CreateProject)}
+      style={styles.addButton}
+    >
+      <FontAwesome name="plus" size={26} color="black" />
+    </TouchableOpacity>
+  ),
+});
 
 const styles = StyleSheet.create({
   root: {
