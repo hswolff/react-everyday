@@ -39,6 +39,7 @@ Data Management
 - [ ] Cache dates that have pictures in data and lazily sync when a project is loaded
 - [x] https://docs.expo.io/versions/v29.0.0/sdk/filesystem
 - [ ] Add TypeScript definitions to the Selector component of react-copy-write
+- [ ] Migrate off of react-copy-write to plain React Context
 
 Project Screen
 
@@ -93,3 +94,4 @@ Miscellaneous
 - [ ] Add support for deep linking to a project
 - [ ] Find final name
 - [ ] Create logo
+- [x] Migrate to Function Components and use Hooks
