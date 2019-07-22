@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Animated, StyleSheet, View, Dimensions } from 'react-native';
 import {
   PanGestureHandler,
@@ -16,161 +16,158 @@ interface GuideCoordinates {
   y: number;
 }
 
-export class AlignmentGuide extends React.Component<{
-  horizontal: boolean;
-  vertical: boolean;
-  defaultX: number;
-  defaultY: number;
+interface AlignmentGuideProps {
+  horizontal?: boolean;
+  vertical?: boolean;
+  defaultX?: number;
+  defaultY?: number;
   movable: boolean;
   onChange: (e: GuideCoordinates) => void;
-}> {
-  static defaultProps = {
-    horizontal: false,
-    vertical: false,
-    defaultX: 0,
-    defaultY: 0,
-    movable: false,
-  };
+}
 
-  private translateX = new Animated.Value(this.props.defaultX);
-  private translateY = new Animated.Value(this.props.defaultY);
+function AlignmentGuide({
+  horizontal = false,
+  vertical = false,
+  defaultX = 0,
+  defaultY = 0,
+  movable = false,
+  onChange,
+}: AlignmentGuideProps) {
+  const translateX = useRef(new Animated.Value(defaultX));
+  const translateY = useRef(new Animated.Value(defaultY));
 
-  private lastOffset = { x: this.props.defaultX, y: this.props.defaultY };
+  const lastOffset = useRef({ x: defaultX, y: defaultY });
 
-  private onGestureEvent = Animated.event(
-    [
-      {
-        nativeEvent: {
-          translationX: this.translateX,
-          translationY: this.translateY,
+  const onGestureEvent = useRef(
+    Animated.event(
+      [
+        {
+          nativeEvent: {
+            translationX: translateX.current,
+            translationY: translateY.current,
+          },
         },
-      },
-    ],
-    { useNativeDriver: USE_NATIVE_DRIVER }
+      ],
+      { useNativeDriver: USE_NATIVE_DRIVER }
+    )
   );
 
-  private onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
+  const onHandlerStateChange = (event: PanGestureHandlerStateChangeEvent) => {
     if (!event.nativeEvent.oldState) {
-      this.translateX.setOffset(this.lastOffset.x);
-      this.translateY.setOffset(this.lastOffset.y);
+      translateX.current.setOffset(lastOffset.current.x);
+      translateY.current.setOffset(lastOffset.current.y);
     }
     if (event.nativeEvent.oldState === State.ACTIVE) {
-      this.lastOffset.x += event.nativeEvent.translationX;
-      this.lastOffset.y += event.nativeEvent.translationY;
+      lastOffset.current.x += event.nativeEvent.translationX;
+      lastOffset.current.y += event.nativeEvent.translationY;
 
-      this.translateX.setOffset(this.lastOffset.x);
-      this.translateX.setValue(0);
-      this.translateY.setOffset(this.lastOffset.y);
-      this.translateY.setValue(0);
+      translateX.current.setOffset(lastOffset.current.x);
+      translateX.current.setValue(0);
+      translateY.current.setOffset(lastOffset.current.y);
+      translateY.current.setValue(0);
     }
     if (event.nativeEvent.state === State.END) {
-      if (this.props.horizontal === false) {
-        this.translateX.setOffset(0);
-        this.translateX.setValue(0);
-        this.lastOffset.x = 0;
+      if (horizontal === false) {
+        translateX.current.setOffset(0);
+        translateX.current.setValue(0);
+        lastOffset.current.x = 0;
       }
-      if (this.props.vertical === false) {
-        this.translateY.setOffset(0);
-        this.translateY.setValue(0);
-        this.lastOffset.y = 0;
+      if (vertical === false) {
+        translateY.current.setOffset(0);
+        translateY.current.setValue(0);
+        lastOffset.current.y = 0;
       }
 
-      this.props.onChange({
+      onChange({
         // @ts-ignore
-        x: this.translateX.toJSON(),
+        x: translateX.current.toJSON(),
         // @ts-ignore
-        y: this.translateY.toJSON(),
+        y: translateY.current.toJSON(),
       });
     }
   };
 
-  render() {
-    const { horizontal, vertical, movable } = this.props;
+  const animatedView = (
+    <Animated.View
+      hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
+      style={[
+        styles.box,
+        {
+          width: vertical ? screen.width : 1,
+          height: horizontal ? screen.height : 1,
+          transform: [
+            horizontal && { translateX: translateX.current },
+            vertical && { translateY: translateY.current },
+          ].filter(Boolean),
+        },
+      ]}
+    />
+  );
 
-    const animatedView = (
-      <Animated.View
-        hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
-        style={[
-          styles.box,
-          {
-            width: this.props.vertical ? screen.width : 1,
-            height: this.props.horizontal ? screen.height : 1,
-            transform: [
-              horizontal && { translateX: this.translateX },
-              vertical && { translateY: this.translateY },
-            ].filter(Boolean),
-          },
-        ]}
-      />
-    );
-
-    if (!movable) {
-      return animatedView;
-    }
-
-    return (
-      <PanGestureHandler
-        onGestureEvent={this.onGestureEvent}
-        onHandlerStateChange={this.onHandlerStateChange}
-      >
-        {animatedView}
-      </PanGestureHandler>
-    );
+  if (!movable) {
+    return animatedView;
   }
+
+  return (
+    <PanGestureHandler
+      onGestureEvent={onGestureEvent.current}
+      onHandlerStateChange={onHandlerStateChange}
+    >
+      {animatedView}
+    </PanGestureHandler>
+  );
 }
 
 interface AlignmentGuidesProps extends AlignmentGuidePositions {
   movable: boolean;
-  onChange: (e: AlignmentGuidePositions) => void;
+  onChange?: (e: AlignmentGuidePositions) => void;
 }
-export default class AlignmentGuides extends React.Component<
-  AlignmentGuidesProps
-> {
-  static defaultProps = {
-    movable: false,
-    onChange: () => {},
-  };
+export default function AlignmentGuides({
+  movable = false,
+  onChange = () => {},
+  center,
+  eyes,
+  mouth,
+}: AlignmentGuidesProps) {
+  const [state, setState] = useState<AlignmentGuidePositions>({
+    center: center,
+    eyes: eyes,
+    mouth: mouth,
+  });
 
-  state: AlignmentGuidePositions = {
-    center: this.props.center,
-    eyes: this.props.eyes,
-    mouth: this.props.mouth,
-  };
-
-  private createOnChangeHandler = (key: keyof AlignmentGuidePositions) => (
+  const createOnChangeHandler = (key: keyof AlignmentGuidePositions) => (
     event: GuideCoordinates
   ) => {
-    const nextState: AlignmentGuidePositions = { ...this.state };
+    const nextState: AlignmentGuidePositions = { ...state };
 
     nextState[key] = event[key === 'center' ? 'x' : 'y'];
 
-    this.setState(nextState, () => this.props.onChange(this.state));
+    setState(nextState);
+    onChange(nextState);
   };
 
-  render() {
-    return (
-      <View style={styles.scrollView}>
-        <AlignmentGuide
-          horizontal
-          onChange={this.createOnChangeHandler('center')}
-          movable={this.props.movable}
-          defaultX={this.props.center}
-        />
-        <AlignmentGuide
-          vertical
-          onChange={this.createOnChangeHandler('eyes')}
-          movable={this.props.movable}
-          defaultY={this.props.eyes}
-        />
-        <AlignmentGuide
-          vertical
-          onChange={this.createOnChangeHandler('mouth')}
-          movable={this.props.movable}
-          defaultY={this.props.mouth}
-        />
-      </View>
-    );
-  }
+  return (
+    <View style={styles.scrollView}>
+      <AlignmentGuide
+        horizontal
+        onChange={createOnChangeHandler('center')}
+        movable={movable}
+        defaultX={center}
+      />
+      <AlignmentGuide
+        vertical
+        onChange={createOnChangeHandler('eyes')}
+        movable={movable}
+        defaultY={eyes}
+      />
+      <AlignmentGuide
+        vertical
+        onChange={createOnChangeHandler('mouth')}
+        movable={movable}
+        defaultY={mouth}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
