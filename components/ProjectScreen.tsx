@@ -4,7 +4,8 @@ import { NavigationScreenProps } from 'react-navigation';
 import { CalendarList } from 'react-native-calendars';
 // @ts-ignore
 import Day from 'react-native-calendars/src/calendar/day/basic';
-import { Consumer, selectors, Project } from './data';
+import { Project } from './types';
+import { Consumer, selectors } from './data';
 import { RouteConfig, RouteParams } from './Router';
 import ProjectOptions from './ProjectOptions';
 

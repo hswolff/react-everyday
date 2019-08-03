@@ -9,7 +9,8 @@ import {
   Dimensions,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { mutators, Consumer, selectors, Project } from './data';
+import { Project } from './types';
+import { mutators, Consumer, selectors } from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import { RouteParams, RouteConfig } from './Router';
 

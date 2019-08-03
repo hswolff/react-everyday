@@ -9,14 +9,12 @@ import {
 } from 'react-native';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
-  mutators,
   Project,
   AlignmentGuidePositions,
   CameraSettings,
   FlashMode,
-  Consumer,
-  selectors,
-} from './data';
+} from './types';
+import { mutators, Consumer, selectors } from './data';
 import { NavigationScreenProps } from 'react-navigation';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';

@@ -13,7 +13,8 @@ import {
   NavigationStackScreenOptions,
 } from 'react-navigation';
 import { RouteConfig, RouteParams } from './Router';
-import { Project, Consumer, selectors } from './data';
+import { Project } from './types';
+import { Consumer, selectors } from './data';
 import ProjectListItem from './ProjectListItem';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 

@@ -5,7 +5,7 @@ import {
   State,
   PanGestureHandlerStateChangeEvent,
 } from 'react-native-gesture-handler';
-import { AlignmentGuidePositions } from './data';
+import { AlignmentGuidePositions } from './types';
 
 const USE_NATIVE_DRIVER = false;
 

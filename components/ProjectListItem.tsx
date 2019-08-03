@@ -7,7 +7,7 @@ import {
   Image,
 } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { Project } from './data';
+import { Project } from './types';
 
 interface Props extends Project {
   onPress: (title: string) => void;
