@@ -14,12 +14,12 @@
  * Provides a mutable API with immutable state for React. Powered
  * by immer and React.createContext.
  */
-import React, { Component } from 'react';
+import React from 'react';
 import produce from 'immer';
 import invariant from 'invariant';
 import shallowEqual from 'fbjs/lib/shallowEqual';
-import createContext from 'create-react-context';
 
+const createContext = React.createContext;
 // The default selector is the identity function
 function identityFn(n) {
   return n;

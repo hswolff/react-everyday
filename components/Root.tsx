@@ -1,24 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { AsyncStorage } from 'react-native';
-import { Consumer, ApplicationState, initialState } from './data';
+import { Provider, Consumer, ApplicationState, initialState } from './data';
 import Router from './Router/createRouter';
-import { Provider } from './data';
-
-const navigationPersistenceKey = __DEV__ ? 'NavigationStateDEV' : null;
 
 function useAsyncStorage(applicationStateKey = 'ApplicationState') {
   const [storedData, setStoredData] = useState(null);
 
   const clearData = async () => {
     await AsyncStorage.setItem(applicationStateKey, '');
-    await AsyncStorage.setItem(String(navigationPersistenceKey), '');
+    // await AsyncStorage.setItem(String(navigationPersistenceKey), '');
   };
 
   const onMount = async () => {
     // await clearData();
     const rawData = await AsyncStorage.getItem(applicationStateKey);
 
-    setStoredData(rawData ? JSON.parse(rawData) : storedData);
+    setStoredData(rawData ? JSON.parse(rawData) : initialState);
   };
 
   useEffect(() => {
@@ -43,7 +40,7 @@ export default function Root() {
   return (
     <Provider initialState={state}>
       <Consumer>{onStateChange}</Consumer>
-      <Router persistenceKey={navigationPersistenceKey} />
+      <Router />
     </Provider>
   );
 }
