@@ -14,7 +14,7 @@
     "expo-camera": "~6.0.0",
     "expo-file-system": "~6.0.2",
     "expo-permissions": "~6.0.0",
-    "immer": "^1.6.0",
+    "immer": "^3.2.0",
     "react": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz",
     "react-native-calendars": "^1.20.0",
